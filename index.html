@@ -1148,7 +1148,7 @@
           <div class="spinner" aria-hidden="true"></div>
           <div>
             <div class="loading-title">Soru bankası yükleniyor</div>
-            <p class="muted">`CyberSecurity_Roadmap_Test.md` okunuyor ve 120 soru ayrıştırılıyor...</p>
+            <p class="muted">`questions.json` yükleniyor ve sınav verisi hazırlanıyor...</p>
           </div>
         </div>
       </div>
@@ -1158,7 +1158,7 @@
       <div class="center-wrap">
         <div class="error-card glass">
           <h2>Dosya yüklenemedi</h2>
-          <p>Markdown dosyası alınamadı. Bu uygulamayı doğrudan dosya olarak açmak yerine yerel bir HTTP sunucusunda çalıştırın.</p>
+          <p>Soru verisi alınamadı. Bu uygulamayı doğrudan dosya olarak açmak yerine yerel bir HTTP sunucusunda çalıştırın.</p>
           <ul>
             <li>Bu klasörde terminal açın.</li>
             <li>`python3 -m http.server 8000` komutunu çalıştırın.</li>
@@ -1324,7 +1324,7 @@
 
     // (1) CONFIG & CONSTANTS
     const CONFIG = {
-      mdPath: "CyberSecurity_Roadmap_Test.md",
+      questionsPath: "questions.json",
       expectedQuestionCount: 120,
       importantStorageKey: "important-questions",
       modes: {
@@ -1401,62 +1401,56 @@
 
     const entityDecoder = document.createElement("textarea");
 
-    // (3) MARKDOWN PARSER
-    function parseMarkdownQuestions(markdownText) {
-      const normalized = markdownText.replace(/\r/g, "");
-      const sections = [
-        { difficulty: "Kolay", regex: /## BÖLÜM I[\s\S]*?(?=## BÖLÜM II|$)/i },
-        { difficulty: "Orta", regex: /## BÖLÜM II[\s\S]*?(?=## BÖLÜM III|$)/i },
-        { difficulty: "Zor", regex: /## BÖLÜM III[\s\S]*?(?=## CEVAP ANAHTARI|$)/i }
-      ];
-
-      const questionRegex = /\*\*(\d+)\.\*\*\s*([\s\S]*?)\nA\)\s*(.*?)\nB\)\s*(.*?)\nC\)\s*(.*?)\nD\)\s*(.*?)\n+\*\*Doğru Cevap:\s*([ABCD])\*\*\s*\n\*\*Açıklama:\*\*\s*([\s\S]*?)(?=\n---\n|\n\*\*\d+\.\*\*|$)/g;
-
-      const out = [];
-
-      sections.forEach((section) => {
-        const secMatch = normalized.match(section.regex);
-        if (!secMatch) {
-          return;
-        }
-
-        const block = secMatch[0];
-        let m;
-        while ((m = questionRegex.exec(block)) !== null) {
-          const id = Number(m[1]);
-          out.push({
-            id,
-            question: cleanMdChunk(m[2]),
-            options: {
-              A: cleanMdChunk(m[3]),
-              B: cleanMdChunk(m[4]),
-              C: cleanMdChunk(m[5]),
-              D: cleanMdChunk(m[6])
-            },
-            correct: m[7],
-            explanation: cleanMdChunk(m[8]),
-            difficulty: section.difficulty
-          });
-        }
-      });
-
-      out.sort((a, b) => a.id - b.id);
-
-      if (!out.length) {
-        throw new Error("Sorular ayrıştırılamadı.");
+    // (3) DATA NORMALIZATION
+    function normalizeQuestionsPayload(payload) {
+      if (!Array.isArray(payload)) {
+        throw new Error("questions.json dizi formatında olmalı.");
       }
 
-      return out;
+      const validDifficulty = new Set(["Kolay", "Orta", "Zor"]);
+      const validCorrect = new Set(["A", "B", "C", "D"]);
+
+      const normalized = payload.map((item, idx) => {
+        const id = Number(item?.id);
+        if (!Number.isInteger(id) || id <= 0) {
+          throw new Error(`Geçersiz soru id (index ${idx}).`);
+        }
+
+        const difficulty = normalizeChunk(item?.difficulty);
+        if (!validDifficulty.has(difficulty)) {
+          throw new Error(`Geçersiz zorluk (#${id}): ${difficulty}`);
+        }
+
+        const correct = normalizeChunk(item?.correct).toUpperCase();
+        if (!validCorrect.has(correct)) {
+          throw new Error(`Geçersiz doğru cevap (#${id}): ${correct}`);
+        }
+
+        return {
+          id,
+          question: normalizeChunk(item?.question),
+          options: {
+            A: normalizeChunk(item?.options?.A),
+            B: normalizeChunk(item?.options?.B),
+            C: normalizeChunk(item?.options?.C),
+            D: normalizeChunk(item?.options?.D)
+          },
+          correct,
+          explanation: normalizeChunk(item?.explanation),
+          difficulty
+        };
+      });
+
+      normalized.sort((a, b) => a.id - b.id);
+      return normalized;
     }
 
-    function cleanMdChunk(text) {
-      const normalized = text
+    function normalizeChunk(value) {
+      return decodeHtmlEntities(String(value ?? ""))
         .split("\n")
         .map((line) => line.replace(/\s+$/g, ""))
         .join("\n")
         .trim();
-
-      return decodeHtmlEntities(normalized);
     }
 
     function decodeHtmlEntities(value) {
@@ -2068,18 +2062,16 @@
       localStorage.setItem("exam-theme", theme);
     }
 
-    async function loadMarkdownQuestions() {
+    async function loadQuestionsData() {
       showScreen("loadingScreen");
 
       try {
-        const res = await fetch(CONFIG.mdPath);
+        const res = await fetch(CONFIG.questionsPath);
         if (!res.ok) {
           throw new Error(`HTTP ${res.status}`);
         }
-        const text = await res.text();
-        const parsed = parseMarkdownQuestions(text);
-
-        state.allQuestions = parsed;
+        const data = await res.json();
+        state.allQuestions = normalizeQuestionsPayload(data);
         normalizeImportantQuestions();
 
         if (state.allQuestions.length !== CONFIG.expectedQuestionCount) {
@@ -2095,7 +2087,7 @@
     }
 
     function bindEvents() {
-      DOM.retryBtn.addEventListener("click", loadMarkdownQuestions);
+      DOM.retryBtn.addEventListener("click", loadQuestionsData);
 
       DOM.modeGrid.addEventListener("click", (e) => {
         const card = e.target.closest(".mode-card");
@@ -2195,7 +2187,7 @@
       applyTheme(savedTheme);
       loadImportantQuestions();
       bindEvents();
-      loadMarkdownQuestions();
+      loadQuestionsData();
     }
 
     init();
