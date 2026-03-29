@@ -224,6 +224,53 @@
       background: var(--surface-2);
     }
 
+    .section-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin: 12px 0 8px;
+    }
+
+    .section-card {
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      cursor: pointer;
+      text-align: left;
+      transition: transform 0.18s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .section-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(0, 180, 216, 0.55);
+    }
+
+    .section-card.selected {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent) inset;
+    }
+
+    .section-card:disabled {
+      opacity: 0.62;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .section-card strong {
+      display: block;
+      font-size: 0.96rem;
+      margin-bottom: 4px;
+    }
+
+    .section-card p {
+      color: var(--muted);
+      font-size: 0.86rem;
+      line-height: 1.4;
+    }
+
     .mode-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -416,6 +463,10 @@
       grid-template-columns: 1fr;
     }
 
+    .exam-layout.sidebar-collapsed .question-area {
+      padding-left: 52px;
+    }
+
     .topbar {
       grid-column: 1 / -1;
       display: flex;
@@ -564,16 +615,16 @@
     .sidebar-edge-toggle {
       display: none;
       position: absolute;
-      left: 6px;
-      top: 50%;
-      transform: translateY(-50%);
+      left: 8px;
+      top: 102px;
+      transform: none;
       z-index: 30;
       border: 1px solid var(--border);
       background: var(--surface);
       color: var(--text);
       border-radius: 10px;
-      width: 34px;
-      height: 54px;
+      width: 38px;
+      height: 46px;
       cursor: pointer;
       box-shadow: var(--shadow);
       font-size: 0.95rem;
@@ -1132,8 +1183,16 @@
         grid-template-columns: 1fr;
       }
 
+      .section-grid {
+        grid-template-columns: 1fr;
+      }
+
       .exam-layout {
         grid-template-columns: 1fr;
+      }
+
+      .exam-layout.sidebar-collapsed .question-area {
+        padding-left: 0;
       }
 
       .sidebar-wrap {
@@ -1163,7 +1222,7 @@
 
       .sidebar-edge-toggle {
         left: 8px;
-        top: 94px;
+        top: 18px;
         transform: none;
         height: 42px;
         width: 42px;
@@ -1224,27 +1283,39 @@
             <span id="questionCountChip" class="chip">Soru: 0</span>
           </div>
 
+          <div class="section-title">Soru Bölümü</div>
+          <div class="section-grid" id="sectionPicker" aria-label="Soru bölümü seçimi">
+            <button type="button" class="section-card" data-section="core">
+              <strong>Ana Bölüm</strong>
+              <p>Temel soru seti (120).</p>
+            </button>
+            <button type="button" class="section-card" data-section="extended">
+              <strong>Extended Bölüm</strong>
+              <p>Yeni eklenen sorular (80).</p>
+            </button>
+          </div>
+
           <div class="section-title">Sınav Modu</div>
           <div class="mode-grid" id="modeGrid">
             <button type="button" class="mode-card" data-mode="full">
               <strong>Tam Sınav</strong>
-              <p>Tüm 120 soru, orijinal sırayla.</p>
+              <p>Seçili bölümün tüm soruları.</p>
             </button>
             <button type="button" class="mode-card" data-mode="level">
               <strong>Seviyeye Göre</strong>
-              <p>Kolay / Orta / Zor alt kümesi seçin.</p>
+              <p>Seçili bölümde Kolay / Orta / Zor alt kümesi.</p>
             </button>
             <button type="button" class="mode-card" data-mode="random30">
               <strong>Rastgele 30</strong>
-              <p>Havuzdan rastgele 30 soru.</p>
+              <p>Seçili bölüm havuzundan rastgele 30 soru.</p>
             </button>
             <button type="button" class="mode-card" data-mode="random60">
               <strong>Rastgele 60</strong>
-              <p>Havuzdan rastgele 60 soru.</p>
+              <p>Seçili bölüm havuzundan rastgele 60 soru.</p>
             </button>
             <button type="button" class="mode-card" data-mode="important">
               <strong>Önemliler</strong>
-              <p>Yıldızladığın soruları tekrar çöz.</p>
+              <p>Tüm bölümlerde yıldızladığın soruları birlikte çöz.</p>
             </button>
           </div>
 
@@ -1285,7 +1356,6 @@
           </div>
 
           <div class="topbar-actions">
-            <button id="sidebarToggleBtn" class="btn btn-ghost" type="button">Sidebar (S)</button>
             <button id="themeToggle" class="btn btn-ghost theme-toggle" type="button">Tema: Dark</button>
             <div id="timerBox" class="timer">--:--</div>
           </div>
@@ -1375,9 +1445,14 @@
     // (1) CONFIG & CONSTANTS
     const CONFIG = {
       questionsPath: "questions.json",
-      expectedQuestionCount: 120,
+      expectedQuestionCount: null,
       importantStorageKey: "important-questions",
-      examSessionStorageKey: "exam-session-v1",
+      examSessionStorageKey: "exam-session-v2",
+      defaultSection: "core",
+      sections: {
+        core: { label: "Ana Bölüm" },
+        extended: { label: "Extended Bölüm" }
+      },
       modes: {
         full: { label: "Tam Sınav", fixedMinutes: 45 },
         level: { label: "Seviyeye Göre", fixedMinutes: null },
@@ -1401,6 +1476,7 @@
       examLayout: document.getElementById("examLayout"),
       retryBtn: document.getElementById("retryBtn"),
       questionCountChip: document.getElementById("questionCountChip"),
+      sectionPicker: document.getElementById("sectionPicker"),
       modeGrid: document.getElementById("modeGrid"),
       levelPicker: document.getElementById("levelPicker"),
       timerToggle: document.getElementById("timerToggle"),
@@ -1408,7 +1484,6 @@
       startExamBtn: document.getElementById("startExamBtn"),
       sidebarWrap: document.getElementById("sidebarWrap"),
       sidebar: document.getElementById("sidebar"),
-      sidebarToggleBtn: document.getElementById("sidebarToggleBtn"),
       sidebarInnerToggleBtn: document.getElementById("sidebarInnerToggleBtn"),
       sidebarEdgeToggleBtn: document.getElementById("sidebarEdgeToggleBtn"),
       questionCard: document.getElementById("questionCard"),
@@ -1440,6 +1515,7 @@
       examQuestions: [],
       answers: {},
       mode: null,
+      selectedSection: CONFIG.defaultSection,
       selectedDifficulty: null,
       timerEnabled: true,
       timerTotalSec: 0,
@@ -1463,6 +1539,7 @@
 
       const validDifficulty = new Set(["Kolay", "Orta", "Zor"]);
       const validCorrect = new Set(["A", "B", "C", "D"]);
+      const validSection = new Set(Object.keys(CONFIG.sections));
 
       const normalized = payload.map((item, idx) => {
         const id = Number(item?.id);
@@ -1480,8 +1557,15 @@
           throw new Error(`Geçersiz doğru cevap (#${id}): ${correct}`);
         }
 
+        const rawSection = normalizeChunk(item?.section).toLowerCase();
+        const section = rawSection || CONFIG.defaultSection;
+        if (!validSection.has(section)) {
+          throw new Error(`Geçersiz bölüm (#${id}): ${section}`);
+        }
+
         return {
           id,
+          section,
           question: normalizeChunk(item?.question),
           options: {
             A: normalizeChunk(item?.options?.A),
@@ -1496,6 +1580,11 @@
       });
 
       normalized.sort((a, b) => a.id - b.id);
+      for (let i = 1; i < normalized.length; i += 1) {
+        if (normalized[i].id === normalized[i - 1].id) {
+          throw new Error(`Çakışan soru id: ${normalized[i].id}`);
+        }
+      }
       return normalized;
     }
 
@@ -1518,6 +1607,26 @@
         current = decoded;
       }
       return current;
+    }
+
+    function resolveSection(section) {
+      return Object.prototype.hasOwnProperty.call(CONFIG.sections, section) ? section : CONFIG.defaultSection;
+    }
+
+    function getQuestionsForSection(section = state.selectedSection) {
+      const target = resolveSection(section);
+      return state.allQuestions.filter((q) => q.section === target);
+    }
+
+    function getSectionCounts() {
+      const counts = {};
+      Object.keys(CONFIG.sections).forEach((section) => {
+        counts[section] = 0;
+      });
+      state.allQuestions.forEach((q) => {
+        counts[q.section] = (counts[q.section] || 0) + 1;
+      });
+      return counts;
     }
 
     // (4) RENDER
@@ -1572,9 +1681,10 @@
       }
 
       const payload = {
-        version: 1,
+        version: 2,
         savedAt: Date.now(),
         mode: state.mode,
+        selectedSection: state.selectedSection,
         selectedDifficulty: state.selectedDifficulty,
         timerEnabled: state.timerEnabled,
         timerTotalSec: state.timerTotalSec,
@@ -1613,7 +1723,10 @@
           return false;
         }
 
-        state.mode = data.mode || null;
+        state.mode = Object.prototype.hasOwnProperty.call(CONFIG.modes, data.mode) ? data.mode : null;
+        const restoredSections = [...new Set(restoredQuestions.map((q) => q.section))];
+        const inferredSection = restoredSections.length === 1 ? restoredSections[0] : CONFIG.defaultSection;
+        state.selectedSection = resolveSection(data.selectedSection || inferredSection);
         state.selectedDifficulty = data.selectedDifficulty || null;
         state.examQuestions = restoredQuestions;
         state.answers = data.answers && typeof data.answers === "object" ? data.answers : {};
@@ -1676,8 +1789,18 @@
 
     function renderStartScreen() {
       const importantCount = state.importantQuestionIds.size;
-      DOM.questionCountChip.textContent = `Soru: ${state.allQuestions.length} · Önemli: ${importantCount}${state.hasActiveSession ? " · Oturum: Var" : ""}`;
+      const sectionCounts = getSectionCounts();
+      DOM.questionCountChip.textContent = `Toplam: ${state.allQuestions.length} · Ana: ${sectionCounts.core || 0} · Extended: ${sectionCounts.extended || 0} · Önemli: ${importantCount}${state.hasActiveSession ? " · Oturum: Var" : ""}`;
       DOM.levelPicker.classList.toggle("show", state.mode === "level");
+
+      const sectionCards = DOM.sectionPicker.querySelectorAll(".section-card");
+      sectionCards.forEach((card) => {
+        const section = card.dataset.section;
+        const isSelected = section === state.selectedSection;
+        const sectionCount = sectionCounts[section] || 0;
+        card.classList.toggle("selected", isSelected);
+        card.disabled = sectionCount === 0;
+      });
 
       const modeCards = DOM.modeGrid.querySelectorAll(".mode-card");
       modeCards.forEach((card) => {
@@ -1958,6 +2081,12 @@
     }
 
     // (5) EVENT HANDLERS
+    function selectSection(section) {
+      const resolved = resolveSection(section);
+      state.selectedSection = resolved;
+      renderStartScreen();
+    }
+
     function selectMode(mode) {
       if (mode === "important" && state.importantQuestionIds.size === 0) {
         showToast("Önce en az bir soruyu önemli olarak işaretlemelisin.", "warn", 2400);
@@ -1979,6 +2108,7 @@
       if (!state.mode) return false;
       if (state.mode === "level" && !state.selectedDifficulty) return false;
       if (state.mode === "important" && state.importantQuestionIds.size === 0) return false;
+      if (state.mode !== "important" && getQuestionsForSection().length === 0) return false;
       return true;
     }
 
@@ -1993,37 +2123,42 @@
 
       if (state.mode === "important") {
         const importantCount = Math.max(1, state.importantQuestionIds.size);
-        const minutes = Math.max(5, Math.round((45 * importantCount) / CONFIG.expectedQuestionCount));
+        const totalCount = Math.max(1, state.allQuestions.length);
+        const minutes = Math.max(5, Math.round((45 * importantCount) / totalCount));
         return minutes * 60;
       }
 
-      const levelCount = state.allQuestions.filter((q) => q.difficulty === state.selectedDifficulty).length || 35;
-      const minutes = Math.max(10, Math.round((45 * levelCount) / CONFIG.expectedQuestionCount));
+      const sectionQuestions = getQuestionsForSection();
+      const baseCount = Math.max(1, sectionQuestions.length);
+      const levelCount = sectionQuestions.filter((q) => q.difficulty === state.selectedDifficulty).length || 1;
+      const minutes = Math.max(10, Math.round((45 * levelCount) / baseCount));
       return minutes * 60;
     }
 
     function getModeDisplayName() {
+      const sectionLabel = CONFIG.sections[state.selectedSection]?.label || CONFIG.sections[CONFIG.defaultSection].label;
       if (state.mode === "level") {
-        return `${CONFIG.modes.level.label} · ${state.selectedDifficulty || "-"}`;
+        return `${CONFIG.modes.level.label} · ${sectionLabel} · ${state.selectedDifficulty || "-"}`;
       }
       if (state.mode === "important") {
-        return `${CONFIG.modes.important.label} · ${state.importantQuestionIds.size} soru`;
+        return `${CONFIG.modes.important.label} · ${state.importantQuestionIds.size} soru · Tüm Bölümler`;
       }
-      return CONFIG.modes[state.mode]?.label || "Sınav";
+      return `${CONFIG.modes[state.mode]?.label || "Sınav"} · ${sectionLabel}`;
     }
 
     function createExamList() {
+      const sectionQuestions = getQuestionsForSection();
       if (state.mode === "full") {
-        return [...state.allQuestions].sort((a, b) => a.id - b.id);
+        return [...sectionQuestions].sort((a, b) => a.id - b.id);
       }
       if (state.mode === "level") {
-        return state.allQuestions.filter((q) => q.difficulty === state.selectedDifficulty).sort((a, b) => a.id - b.id);
+        return sectionQuestions.filter((q) => q.difficulty === state.selectedDifficulty).sort((a, b) => a.id - b.id);
       }
       if (state.mode === "random30") {
-        return shuffle([...state.allQuestions]).slice(0, 30);
+        return shuffle([...sectionQuestions]).slice(0, 30);
       }
       if (state.mode === "random60") {
-        return shuffle([...state.allQuestions]).slice(0, 60);
+        return shuffle([...sectionQuestions]).slice(0, 60);
       }
       if (state.mode === "important") {
         return state.allQuestions.filter((q) => state.importantQuestionIds.has(q.id)).sort((a, b) => a.id - b.id);
@@ -2237,7 +2372,7 @@
         state.allQuestions = normalizeQuestionsPayload(data);
         normalizeImportantQuestions();
 
-        if (state.allQuestions.length !== CONFIG.expectedQuestionCount) {
+        if (Number.isInteger(CONFIG.expectedQuestionCount) && state.allQuestions.length !== CONFIG.expectedQuestionCount) {
           showToast(`Uyarı: ${state.allQuestions.length} soru bulundu (beklenen ${CONFIG.expectedQuestionCount}).`, "warn", 4600);
         }
 
@@ -2256,6 +2391,12 @@
 
     function bindEvents() {
       DOM.retryBtn.addEventListener("click", loadQuestionsData);
+
+      DOM.sectionPicker.addEventListener("click", (e) => {
+        const card = e.target.closest(".section-card");
+        if (!card) return;
+        selectSection(card.dataset.section);
+      });
 
       DOM.modeGrid.addEventListener("click", (e) => {
         const card = e.target.closest(".mode-card");
@@ -2307,7 +2448,6 @@
       DOM.reviewBtn.addEventListener("click", openReviewMode);
       DOM.newExamBtn.addEventListener("click", resetToStart);
 
-      DOM.sidebarToggleBtn.addEventListener("click", toggleSidebar);
       DOM.sidebarInnerToggleBtn.addEventListener("click", toggleSidebar);
       DOM.sidebarEdgeToggleBtn.addEventListener("click", toggleSidebar);
       DOM.mobileOverlay.addEventListener("click", () => {

