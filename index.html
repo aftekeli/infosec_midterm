@@ -270,6 +270,15 @@
       transform: translateY(-2px);
     }
 
+    .mode-card:disabled,
+    .mode-card.disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+      border-color: var(--border);
+    }
+
     .mode-card strong {
       display: block;
       font-size: 1rem;
@@ -590,6 +599,11 @@
       border-color: rgba(239, 71, 111, 0.6);
     }
 
+    .q-btn.important {
+      border-color: rgba(248, 197, 55, 0.75);
+      box-shadow: 0 0 0 1px rgba(248, 197, 55, 0.32) inset;
+    }
+
     .status-badge {
       font-size: 0.68rem;
       opacity: 0.9;
@@ -625,6 +639,13 @@
       flex-wrap: wrap;
     }
 
+    .q-head-actions {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
     .q-count {
       color: var(--muted);
       font-weight: 600;
@@ -655,6 +676,35 @@
       background: rgba(239, 71, 111, 0.15);
       color: #ff96ad;
       border-color: rgba(239, 71, 111, 0.45);
+    }
+
+    .important-toggle {
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .important-toggle:hover {
+      border-color: rgba(248, 197, 55, 0.8);
+      color: #ffe38a;
+    }
+
+    .important-toggle.active {
+      border-color: rgba(248, 197, 55, 0.85);
+      background: rgba(248, 197, 55, 0.18);
+      color: #ffe38a;
+      box-shadow: 0 0 16px rgba(248, 197, 55, 0.2);
+    }
+
+    body[data-theme="light"] .important-toggle:hover,
+    body[data-theme="light"] .important-toggle.active {
+      color: #7a5600;
     }
 
     body[data-theme="light"] .difficulty-kolay {
@@ -1148,6 +1198,10 @@
               <strong>Rastgele 60</strong>
               <p>Havuzdan rastgele 60 soru.</p>
             </button>
+            <button type="button" class="mode-card" data-mode="important">
+              <strong>Önemliler</strong>
+              <p>Yıldızladığın soruları tekrar çöz.</p>
+            </button>
           </div>
 
           <div id="levelPicker" class="level-picker" aria-label="Seviye seçimi">
@@ -1272,11 +1326,13 @@
     const CONFIG = {
       mdPath: "CyberSecurity_Roadmap_Test.md",
       expectedQuestionCount: 120,
+      importantStorageKey: "important-questions",
       modes: {
         full: { label: "Tam Sınav", fixedMinutes: 45 },
         level: { label: "Seviyeye Göre", fixedMinutes: null },
         random30: { label: "Rastgele 30", fixedMinutes: 15 },
-        random60: { label: "Rastgele 60", fixedMinutes: 30 }
+        random60: { label: "Rastgele 60", fixedMinutes: 30 },
+        important: { label: "Önemliler", fixedMinutes: null }
       },
       difficultyMeta: {
         Kolay: { dot: "🟢", className: "difficulty-kolay" },
@@ -1339,7 +1395,8 @@
       currentIndex: 0,
       reviewMode: false,
       sidebarOpen: window.innerWidth > 768,
-      score: null
+      score: null,
+      importantQuestionIds: new Set()
     };
 
     const entityDecoder = document.createElement("textarea");
@@ -1421,14 +1478,68 @@
       DOM[screenKey].classList.add("active");
     }
 
+    function loadImportantQuestions() {
+      try {
+        const raw = localStorage.getItem(CONFIG.importantStorageKey);
+        if (!raw) return;
+        const parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed)) return;
+        state.importantQuestionIds = new Set(parsed.map((id) => Number(id)).filter((id) => Number.isInteger(id) && id > 0));
+      } catch (err) {
+        console.error("Önemli sorular okunamadı:", err);
+      }
+    }
+
+    function persistImportantQuestions() {
+      localStorage.setItem(CONFIG.importantStorageKey, JSON.stringify([...state.importantQuestionIds]));
+    }
+
+    function normalizeImportantQuestions() {
+      const validIds = new Set(state.allQuestions.map((q) => q.id));
+      const filtered = [...state.importantQuestionIds].filter((id) => validIds.has(id));
+      if (filtered.length !== state.importantQuestionIds.size) {
+        state.importantQuestionIds = new Set(filtered);
+        persistImportantQuestions();
+      }
+    }
+
+    function toggleImportantCurrentQuestion() {
+      const q = state.examQuestions[state.currentIndex];
+      if (!q) return;
+      if (state.importantQuestionIds.has(q.id)) {
+        state.importantQuestionIds.delete(q.id);
+        showToast(`Soru #${q.id} önemli listesinden çıkarıldı.`, "info", 1800);
+      } else {
+        state.importantQuestionIds.add(q.id);
+        showToast(`Soru #${q.id} önemli olarak kaydedildi.`, "info", 1800);
+      }
+      persistImportantQuestions();
+      renderAllExam();
+      renderStartScreen();
+    }
+
     function renderStartScreen() {
-      DOM.questionCountChip.textContent = `Soru: ${state.allQuestions.length}`;
+      const importantCount = state.importantQuestionIds.size;
+      DOM.questionCountChip.textContent = `Soru: ${state.allQuestions.length} · Önemli: ${importantCount}`;
       DOM.levelPicker.classList.toggle("show", state.mode === "level");
 
       const modeCards = DOM.modeGrid.querySelectorAll(".mode-card");
       modeCards.forEach((card) => {
         card.classList.toggle("selected", card.dataset.mode === state.mode);
       });
+
+      const importantModeCard = DOM.modeGrid.querySelector("[data-mode='important']");
+      if (importantModeCard) {
+        const importantDisabled = importantCount === 0;
+        importantModeCard.disabled = importantDisabled;
+        importantModeCard.classList.toggle("disabled", importantDisabled);
+        const desc = importantModeCard.querySelector("p");
+        if (desc) {
+          desc.textContent = importantDisabled
+            ? "Önce soruları yıldızla işaretle."
+            : `${importantCount} önemli soru hazır.`;
+        }
+      }
 
       const levelBtns = DOM.levelPicker.querySelectorAll(".level-btn");
       levelBtns.forEach((btn) => {
@@ -1446,13 +1557,15 @@
 
       state.examQuestions.forEach((q, idx) => {
         const answer = state.answers[q.id];
+        const isImportant = state.importantQuestionIds.has(q.id);
         const statusClass = !answer ? "" : answer.isCorrect ? "correct" : "wrong";
         const statusIcon = !answer ? "" : answer.isCorrect ? "✓" : "✗";
+        const marker = [isImportant ? "★" : "", statusIcon].filter(Boolean).join(" ");
 
         groups[q.difficulty].push(`
-          <button class="q-btn ${statusClass} ${idx === state.currentIndex ? "current" : ""}" data-index="${idx}" type="button">
+          <button class="q-btn ${isImportant ? "important" : ""} ${statusClass} ${idx === state.currentIndex ? "current" : ""}" data-index="${idx}" type="button">
             <span>${q.id}</span>
-            <span class="status-badge">${statusIcon}</span>
+            <span class="status-badge">${marker}</span>
           </button>
         `);
       });
@@ -1484,6 +1597,7 @@
       const meta = CONFIG.difficultyMeta[q.difficulty];
       const isAnswered = Boolean(answer);
       const forceReveal = state.reviewMode;
+      const isImportant = state.importantQuestionIds.has(q.id);
 
       const optionsHtml = ["A", "B", "C", "D"].map((letter) => {
         const selected = answer && answer.selected === letter;
@@ -1509,7 +1623,12 @@
       DOM.questionCard.innerHTML = `
         <div class="q-head">
           <div class="q-count">Soru ${state.currentIndex + 1} / ${state.examQuestions.length} · #${q.id}</div>
-          <span class="difficulty-badge ${meta.className}">${q.difficulty} ${meta.dot}</span>
+          <div class="q-head-actions">
+            <button type="button" class="important-toggle ${isImportant ? "active" : ""}" data-action="toggle-important">
+              ${isImportant ? "★ Önemli" : "☆ Önemli"}
+            </button>
+            <span class="difficulty-badge ${meta.className}">${q.difficulty} ${meta.dot}</span>
+          </div>
         </div>
 
         <div class="question-text">${renderMarkdownRich(q.question)}</div>
@@ -1680,6 +1799,10 @@
 
     // (5) EVENT HANDLERS
     function selectMode(mode) {
+      if (mode === "important" && state.importantQuestionIds.size === 0) {
+        showToast("Önce en az bir soruyu önemli olarak işaretlemelisin.", "warn", 2400);
+        return;
+      }
       state.mode = mode;
       if (mode !== "level") {
         state.selectedDifficulty = null;
@@ -1695,6 +1818,7 @@
     function isStartReady() {
       if (!state.mode) return false;
       if (state.mode === "level" && !state.selectedDifficulty) return false;
+      if (state.mode === "important" && state.importantQuestionIds.size === 0) return false;
       return true;
     }
 
@@ -1707,6 +1831,12 @@
         return byMode.fixedMinutes * 60;
       }
 
+      if (state.mode === "important") {
+        const importantCount = Math.max(1, state.importantQuestionIds.size);
+        const minutes = Math.max(5, Math.round((45 * importantCount) / CONFIG.expectedQuestionCount));
+        return minutes * 60;
+      }
+
       const levelCount = state.allQuestions.filter((q) => q.difficulty === state.selectedDifficulty).length || 35;
       const minutes = Math.max(10, Math.round((45 * levelCount) / CONFIG.expectedQuestionCount));
       return minutes * 60;
@@ -1715,6 +1845,9 @@
     function getModeDisplayName() {
       if (state.mode === "level") {
         return `${CONFIG.modes.level.label} · ${state.selectedDifficulty || "-"}`;
+      }
+      if (state.mode === "important") {
+        return `${CONFIG.modes.important.label} · ${state.importantQuestionIds.size} soru`;
       }
       return CONFIG.modes[state.mode]?.label || "Sınav";
     }
@@ -1732,11 +1865,20 @@
       if (state.mode === "random60") {
         return shuffle([...state.allQuestions]).slice(0, 60);
       }
+      if (state.mode === "important") {
+        return state.allQuestions.filter((q) => state.importantQuestionIds.has(q.id)).sort((a, b) => a.id - b.id);
+      }
       return [];
     }
 
     function startExam() {
       state.examQuestions = createExamList();
+      if (!state.examQuestions.length) {
+        showToast("Bu mod için soru bulunamadı.", "error", 2600);
+        showScreen("startScreen");
+        renderStartScreen();
+        return;
+      }
       state.answers = {};
       state.currentIndex = 0;
       state.reviewMode = false;
@@ -1938,6 +2080,7 @@
         const parsed = parseMarkdownQuestions(text);
 
         state.allQuestions = parsed;
+        normalizeImportantQuestions();
 
         if (state.allQuestions.length !== CONFIG.expectedQuestionCount) {
           showToast(`Uyarı: ${state.allQuestions.length} soru bulundu (beklenen ${CONFIG.expectedQuestionCount}).`, "warn", 4600);
@@ -1986,6 +2129,12 @@
       });
 
       DOM.questionCard.addEventListener("click", (e) => {
+        const importantBtn = e.target.closest(".important-toggle");
+        if (importantBtn) {
+          toggleImportantCurrentQuestion();
+          return;
+        }
+
         const opt = e.target.closest(".option");
         if (!opt || opt.disabled) return;
         answerCurrent(opt.dataset.option);
@@ -2028,6 +2177,9 @@
         } else if (key === "s") {
           e.preventDefault();
           toggleSidebar();
+        } else if (key === "m") {
+          e.preventDefault();
+          toggleImportantCurrentQuestion();
         }
       });
 
@@ -2041,6 +2193,7 @@
     function init() {
       const savedTheme = localStorage.getItem("exam-theme") || "dark";
       applyTheme(savedTheme);
+      loadImportantQuestions();
       bindEvents();
       loadMarkdownQuestions();
     }
