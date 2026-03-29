@@ -1342,6 +1342,8 @@
       score: null
     };
 
+    const entityDecoder = document.createElement("textarea");
+
     // (3) MARKDOWN PARSER
     function parseMarkdownQuestions(markdownText) {
       const normalized = markdownText.replace(/\r/g, "");
@@ -1391,11 +1393,19 @@
     }
 
     function cleanMdChunk(text) {
-      return text
+      const normalized = text
         .split("\n")
         .map((line) => line.replace(/\s+$/g, ""))
         .join("\n")
         .trim();
+
+      return decodeHtmlEntities(normalized);
+    }
+
+    function decodeHtmlEntities(value) {
+      if (!value) return "";
+      entityDecoder.innerHTML = value;
+      return entityDecoder.value;
     }
 
     // (4) RENDER
