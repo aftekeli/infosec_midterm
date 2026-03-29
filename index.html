@@ -1403,9 +1403,16 @@
     }
 
     function decodeHtmlEntities(value) {
-      if (!value) return "";
-      entityDecoder.innerHTML = value;
-      return entityDecoder.value;
+      let current = value || "";
+      for (let i = 0; i < 3; i += 1) {
+        entityDecoder.innerHTML = current;
+        const decoded = entityDecoder.value;
+        if (decoded === current) {
+          break;
+        }
+        current = decoded;
+      }
+      return current;
     }
 
     // (4) RENDER
@@ -1617,7 +1624,7 @@
     }
 
     function renderMarkdownRich(md) {
-      const escaped = escapeHtml(md);
+      const escaped = escapeHtml(decodeHtmlEntities(md));
       const chunks = [];
       let last = 0;
       const fenceRegex = /```([\s\S]*?)```/g;
@@ -1659,7 +1666,7 @@
     }
 
     function renderMarkdownInline(text) {
-      return escapeHtml(text).replace(/`([^`]+)`/g, "<code>$1</code>");
+      return escapeHtml(decodeHtmlEntities(text)).replace(/`([^`]+)`/g, "<code>$1</code>");
     }
 
     function escapeHtml(value) {
