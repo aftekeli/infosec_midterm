@@ -120,25 +120,7 @@
     }
 
     .theme-toggle {
-      position: fixed;
-      top: 18px;
-      right: 18px;
-      z-index: 90;
-      border: 1px solid var(--border);
-      background: var(--surface);
-      color: var(--text);
-      border-radius: 999px;
-      padding: 10px 14px;
-      font-size: 0.82rem;
-      font-weight: 600;
-      cursor: pointer;
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(10px);
-      transition: transform 0.2s ease;
-    }
-
-    .theme-toggle:hover {
-      transform: translateY(-2px);
+      white-space: nowrap;
     }
 
     .glass {
@@ -422,6 +404,7 @@
     }
 
     .exam-layout {
+      position: relative;
       height: 100%;
       display: grid;
       grid-template-columns: 280px 1fr;
@@ -439,7 +422,8 @@
       align-items: center;
       gap: 10px;
       padding: 12px 16px;
-      min-height: 80px;
+      min-height: 88px;
+      flex-wrap: wrap;
     }
 
     .topbar-left {
@@ -503,6 +487,8 @@
       gap: 10px;
       align-items: center;
       margin-left: auto;
+      flex-wrap: wrap;
+      justify-content: flex-end;
     }
 
     .timer {
@@ -539,11 +525,65 @@
       overflow: hidden;
     }
 
+    .sidebar-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 12px 8px 12px;
+      border-bottom: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .sidebar-inline-toggle {
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text);
+      border-radius: 8px;
+      padding: 5px 9px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .sidebar-inline-toggle:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
     .sidebar {
-      height: 100%;
+      height: calc(100% - 48px);
       padding: 12px;
       overflow-y: auto;
       transition: transform 0.26s ease;
+    }
+
+    .sidebar-edge-toggle {
+      display: none;
+      position: absolute;
+      left: 6px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 30;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      border-radius: 10px;
+      width: 34px;
+      height: 54px;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .sidebar-edge-toggle.show {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .sidebar-group {
@@ -1115,15 +1155,19 @@
         min-height: 0;
       }
 
-      .topbar {
-        flex-wrap: wrap;
-        gap: 8px;
-      }
-
       .topbar-actions {
         width: 100%;
         margin-left: 0;
         justify-content: flex-end;
+      }
+
+      .sidebar-edge-toggle {
+        left: 8px;
+        top: 94px;
+        transform: none;
+        height: 42px;
+        width: 42px;
+        border-radius: 999px;
       }
 
       .stat-grid {
@@ -1141,8 +1185,6 @@
   </style>
 </head>
 <body>
-  <button id="themeToggle" class="theme-toggle" type="button">Tema: Dark</button>
-
   <div class="app" id="app">
     <section id="loadingScreen" class="screen active">
       <div class="center-wrap">
@@ -1244,13 +1286,19 @@
 
           <div class="topbar-actions">
             <button id="sidebarToggleBtn" class="btn btn-ghost" type="button">Sidebar (S)</button>
+            <button id="themeToggle" class="btn btn-ghost theme-toggle" type="button">Tema: Dark</button>
             <div id="timerBox" class="timer">--:--</div>
           </div>
         </header>
 
         <aside id="sidebarWrap" class="sidebar-wrap glass">
+          <div class="sidebar-head">
+            <span>Soru Listesi</span>
+            <button id="sidebarInnerToggleBtn" class="sidebar-inline-toggle" type="button">Kapat</button>
+          </div>
           <div id="sidebar" class="sidebar"></div>
         </aside>
+        <button id="sidebarEdgeToggleBtn" class="sidebar-edge-toggle" type="button" aria-label="Sidebar aç/kapat">☰</button>
 
         <main class="question-area">
           <article id="questionCard" class="question-card glass"></article>
@@ -1329,6 +1377,7 @@
       questionsPath: "questions.json",
       expectedQuestionCount: 120,
       importantStorageKey: "important-questions",
+      examSessionStorageKey: "exam-session-v1",
       modes: {
         full: { label: "Tam Sınav", fixedMinutes: 45 },
         level: { label: "Seviyeye Göre", fixedMinutes: null },
@@ -1360,6 +1409,8 @@
       sidebarWrap: document.getElementById("sidebarWrap"),
       sidebar: document.getElementById("sidebar"),
       sidebarToggleBtn: document.getElementById("sidebarToggleBtn"),
+      sidebarInnerToggleBtn: document.getElementById("sidebarInnerToggleBtn"),
+      sidebarEdgeToggleBtn: document.getElementById("sidebarEdgeToggleBtn"),
       questionCard: document.getElementById("questionCard"),
       prevBtn: document.getElementById("prevBtn"),
       nextBtn: document.getElementById("nextBtn"),
@@ -1398,7 +1449,8 @@
       reviewMode: false,
       sidebarOpen: window.innerWidth > 768,
       score: null,
-      importantQuestionIds: new Set()
+      importantQuestionIds: new Set(),
+      hasActiveSession: false
     };
 
     const entityDecoder = document.createElement("textarea");
@@ -1514,9 +1566,117 @@
       renderStartScreen();
     }
 
+    function persistExamSession() {
+      if (!state.examQuestions.length || DOM.resultsScreen.classList.contains("active")) {
+        return;
+      }
+
+      const payload = {
+        version: 1,
+        savedAt: Date.now(),
+        mode: state.mode,
+        selectedDifficulty: state.selectedDifficulty,
+        timerEnabled: state.timerEnabled,
+        timerTotalSec: state.timerTotalSec,
+        timerRemainingSec: state.timerRemainingSec,
+        currentIndex: state.currentIndex,
+        reviewMode: state.reviewMode,
+        sidebarOpen: state.sidebarOpen,
+        examQuestionIds: state.examQuestions.map((q) => q.id),
+        answers: state.answers
+      };
+
+      localStorage.setItem(CONFIG.examSessionStorageKey, JSON.stringify(payload));
+      state.hasActiveSession = true;
+    }
+
+    function clearExamSession() {
+      localStorage.removeItem(CONFIG.examSessionStorageKey);
+      state.hasActiveSession = false;
+    }
+
+    function restoreExamSession() {
+      const raw = localStorage.getItem(CONFIG.examSessionStorageKey);
+      if (!raw) return false;
+
+      try {
+        const data = JSON.parse(raw);
+        if (!data || !Array.isArray(data.examQuestionIds) || !data.examQuestionIds.length) {
+          clearExamSession();
+          return false;
+        }
+
+        const byId = new Map(state.allQuestions.map((q) => [q.id, q]));
+        const restoredQuestions = data.examQuestionIds.map((id) => byId.get(Number(id))).filter(Boolean);
+        if (!restoredQuestions.length || restoredQuestions.length !== data.examQuestionIds.length) {
+          clearExamSession();
+          return false;
+        }
+
+        state.mode = data.mode || null;
+        state.selectedDifficulty = data.selectedDifficulty || null;
+        state.examQuestions = restoredQuestions;
+        state.answers = data.answers && typeof data.answers === "object" ? data.answers : {};
+        state.currentIndex = Math.max(0, Math.min(Number(data.currentIndex) || 0, state.examQuestions.length - 1));
+        state.reviewMode = Boolean(data.reviewMode);
+        state.score = null;
+        state.timerEnabled = Boolean(data.timerEnabled);
+        state.timerTotalSec = Number(data.timerTotalSec) || estimateExamSeconds();
+        state.timerRemainingSec = Number(data.timerRemainingSec) || state.timerTotalSec;
+        state.sidebarOpen = typeof data.sidebarOpen === "boolean" ? data.sidebarOpen : state.sidebarOpen;
+
+        if (state.timerEnabled && !state.reviewMode) {
+          const elapsedSec = Math.max(0, Math.floor((Date.now() - (Number(data.savedAt) || Date.now())) / 1000));
+          state.timerRemainingSec = Math.max(0, state.timerRemainingSec - elapsedSec);
+          if (state.timerRemainingSec <= 0) {
+            clearExamSession();
+            showToast("Önceki oturumun süresi dolduğu için devam ettirilemedi.", "warn", 3200);
+            return false;
+          }
+        }
+
+        state.hasActiveSession = true;
+        showScreen("examScreen");
+        stopTimer();
+        startTimerLoop();
+        renderAllExam();
+        showToast("Önceki oturum geri yüklendi.", "info", 2200);
+        return true;
+      } catch (err) {
+        console.error("Sınav oturumu geri yüklenemedi:", err);
+        clearExamSession();
+        return false;
+      }
+    }
+
+    function startTimerLoop() {
+      if (!state.timerEnabled || state.reviewMode) {
+        return;
+      }
+
+      state.timerIntervalId = setInterval(() => {
+        state.timerRemainingSec -= 1;
+        renderTimer();
+
+        if (state.timerRemainingSec <= 0) {
+          stopTimer();
+          state.timerRemainingSec = 0;
+          renderTimer();
+          clearExamSession();
+          showToast("Süre doldu. Sınav otomatik gönderiliyor.", "warn", 3000);
+          submitExam(true);
+          return;
+        }
+
+        if (state.timerRemainingSec % 5 === 0) {
+          persistExamSession();
+        }
+      }, 1000);
+    }
+
     function renderStartScreen() {
       const importantCount = state.importantQuestionIds.size;
-      DOM.questionCountChip.textContent = `Soru: ${state.allQuestions.length} · Önemli: ${importantCount}`;
+      DOM.questionCountChip.textContent = `Soru: ${state.allQuestions.length} · Önemli: ${importantCount}${state.hasActiveSession ? " · Oturum: Var" : ""}`;
       DOM.levelPicker.classList.toggle("show", state.mode === "level");
 
       const modeCards = DOM.modeGrid.querySelectorAll(".mode-card");
@@ -1704,16 +1864,19 @@
 
     function syncSidebarLayout() {
       const mobile = window.innerWidth <= 768;
+      DOM.sidebarInnerToggleBtn.textContent = state.sidebarOpen ? "Kapat" : "Aç";
       if (mobile) {
         DOM.sidebarWrap.style.display = "block";
         DOM.sidebarWrap.classList.toggle("open", state.sidebarOpen);
         DOM.mobileOverlay.classList.toggle("show", state.sidebarOpen && DOM.examScreen.classList.contains("active"));
         DOM.examLayout.classList.remove("sidebar-collapsed");
+        DOM.sidebarEdgeToggleBtn.classList.toggle("show", !state.sidebarOpen && DOM.examScreen.classList.contains("active"));
       } else {
         DOM.sidebarWrap.classList.remove("open");
         DOM.mobileOverlay.classList.remove("show");
         DOM.sidebarWrap.style.display = state.sidebarOpen ? "block" : "none";
         DOM.examLayout.classList.toggle("sidebar-collapsed", !state.sidebarOpen);
+        DOM.sidebarEdgeToggleBtn.classList.toggle("show", !state.sidebarOpen && DOM.examScreen.classList.contains("active"));
       }
     }
 
@@ -1723,6 +1886,7 @@
       renderSidebar();
       renderQuestion();
       syncSidebarLayout();
+      persistExamSession();
     }
 
     function showToast(message, type = "info", timeout = 2600) {
@@ -1868,6 +2032,7 @@
     }
 
     function startExam() {
+      clearExamSession();
       state.examQuestions = createExamList();
       if (!state.examQuestions.length) {
         showToast("Bu mod için soru bulunamadı.", "error", 2600);
@@ -1882,21 +2047,10 @@
       state.timerEnabled = DOM.timerToggle.checked;
       state.timerTotalSec = estimateExamSeconds();
       state.timerRemainingSec = state.timerTotalSec;
+      state.hasActiveSession = true;
 
       stopTimer();
-      if (state.timerEnabled) {
-        state.timerIntervalId = setInterval(() => {
-          state.timerRemainingSec -= 1;
-          renderTimer();
-          if (state.timerRemainingSec <= 0) {
-            stopTimer();
-            state.timerRemainingSec = 0;
-            renderTimer();
-            showToast("Süre doldu. Sınav otomatik gönderiliyor.", "warn", 3000);
-            submitExam(true);
-          }
-        }, 1000);
-      }
+      startTimerLoop();
 
       showScreen("examScreen");
       syncSidebarLayout();
@@ -1995,6 +2149,7 @@
       }
 
       stopTimer();
+      clearExamSession();
       state.score = computeScore();
       showScreen("resultsScreen");
       renderResults();
@@ -2003,17 +2158,22 @@
     function openReviewMode() {
       state.reviewMode = true;
       state.currentIndex = 0;
+      stopTimer();
+      clearExamSession();
       showScreen("examScreen");
       renderAllExam();
     }
 
     function resetToStart() {
       stopTimer();
+      clearExamSession();
       state.examQuestions = [];
       state.answers = {};
       state.currentIndex = 0;
       state.reviewMode = false;
       state.score = null;
+      state.mode = null;
+      state.selectedDifficulty = null;
       showScreen("startScreen");
       renderStartScreen();
     }
@@ -2021,6 +2181,7 @@
     function toggleSidebar() {
       state.sidebarOpen = !state.sidebarOpen;
       syncSidebarLayout();
+      persistExamSession();
     }
 
     function formatTime(sec) {
@@ -2080,6 +2241,11 @@
           showToast(`Uyarı: ${state.allQuestions.length} soru bulundu (beklenen ${CONFIG.expectedQuestionCount}).`, "warn", 4600);
         }
 
+        if (restoreExamSession()) {
+          return;
+        }
+
+        state.hasActiveSession = false;
         showScreen("startScreen");
         renderStartScreen();
       } catch (err) {
@@ -2142,9 +2308,12 @@
       DOM.newExamBtn.addEventListener("click", resetToStart);
 
       DOM.sidebarToggleBtn.addEventListener("click", toggleSidebar);
+      DOM.sidebarInnerToggleBtn.addEventListener("click", toggleSidebar);
+      DOM.sidebarEdgeToggleBtn.addEventListener("click", toggleSidebar);
       DOM.mobileOverlay.addEventListener("click", () => {
         state.sidebarOpen = false;
         syncSidebarLayout();
+        persistExamSession();
       });
 
       window.addEventListener("resize", syncSidebarLayout);
