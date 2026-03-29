@@ -1,0 +1,2039 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CyberSecurity E-Exam</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0d1117;
+      --bg-secondary: #121821;
+      --surface: #161b22;
+      --surface-2: rgba(255, 255, 255, 0.06);
+      --border: rgba(255, 255, 255, 0.15);
+      --text: #f5f7fb;
+      --muted: #a7b4c7;
+      --accent: #00b4d8;
+      --accent-soft: rgba(0, 180, 216, 0.22);
+      --correct: #2fbf71;
+      --correct-soft: rgba(47, 191, 113, 0.22);
+      --wrong: #ef476f;
+      --wrong-soft: rgba(239, 71, 111, 0.24);
+      --warning: #f8c537;
+      --shadow: 0 14px 40px rgba(0, 0, 0, 0.35);
+      --radius-lg: 18px;
+      --radius-md: 12px;
+      --radius-sm: 9px;
+    }
+
+    body[data-theme="light"] {
+      --bg: #edf4ff;
+      --bg-secondary: #dde8f9;
+      --surface: rgba(255, 255, 255, 0.88);
+      --surface-2: rgba(255, 255, 255, 0.72);
+      --border: rgba(22, 27, 34, 0.16);
+      --text: #0f1828;
+      --muted: #4f5f77;
+      --accent: #007ba3;
+      --accent-soft: rgba(0, 123, 163, 0.2);
+      --correct: #16834a;
+      --correct-soft: rgba(22, 131, 74, 0.2);
+      --wrong: #cc224f;
+      --wrong-soft: rgba(204, 34, 79, 0.18);
+      --warning: #b58400;
+      --shadow: 0 14px 30px rgba(23, 42, 70, 0.18);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      width: 100%;
+      min-height: 100%;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(0, 180, 216, 0.17), transparent 35%),
+        radial-gradient(circle at 88% 8%, rgba(0, 120, 255, 0.14), transparent 30%),
+        linear-gradient(135deg, var(--bg), var(--bg-secondary));
+      color: var(--text);
+      font-family: "Inter", sans-serif;
+      overflow: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 28px 28px;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    ::-webkit-scrollbar {
+      width: 9px;
+      height: 9px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(var(--accent), #027ca2);
+      border-radius: 999px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .app {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      padding: 18px;
+    }
+
+    .screen {
+      display: none;
+      width: 100%;
+      height: 100%;
+      animation: rise 0.35s ease;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    @keyframes rise {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .theme-toggle {
+      position: fixed;
+      top: 18px;
+      right: 18px;
+      z-index: 90;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      transition: transform 0.2s ease;
+    }
+
+    .theme-toggle:hover {
+      transform: translateY(-2px);
+    }
+
+    .glass {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+
+    .center-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      padding: 18px;
+    }
+
+    .loading-card,
+    .error-card,
+    .start-card {
+      width: min(960px, 96vw);
+      padding: 26px;
+    }
+
+    .loading-card {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .spinner {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      border: 4px solid rgba(255, 255, 255, 0.2);
+      border-top-color: var(--accent);
+      animation: spin 0.85s linear infinite;
+      box-shadow: 0 0 22px var(--accent-soft);
+      flex: 0 0 auto;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .loading-title,
+    .section-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .muted {
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    .error-card h2 {
+      font-size: 1.45rem;
+      margin-bottom: 8px;
+    }
+
+    .error-card p,
+    .error-card li {
+      color: var(--muted);
+      line-height: 1.62;
+    }
+
+    .error-card ul {
+      margin-left: 20px;
+      margin-top: 10px;
+      margin-bottom: 12px;
+    }
+
+    .start-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+      align-items: flex-start;
+    }
+
+    .start-title h1 {
+      font-size: clamp(1.6rem, 2.6vw, 2.1rem);
+      margin-bottom: 7px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      padding: 6px 10px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      background: var(--surface-2);
+    }
+
+    .mode-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin: 14px 0;
+    }
+
+    .mode-card {
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      cursor: pointer;
+      transition: transform 0.18s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .mode-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(0, 180, 216, 0.65);
+      box-shadow: 0 0 0 1px rgba(0, 180, 216, 0.2) inset;
+    }
+
+    .mode-card.selected {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent) inset, 0 0 25px var(--accent-soft);
+      transform: translateY(-2px);
+    }
+
+    .mode-card strong {
+      display: block;
+      font-size: 1rem;
+      margin-bottom: 6px;
+    }
+
+    .mode-card p {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.45;
+    }
+
+    .level-picker {
+      display: none;
+      margin-bottom: 12px;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .level-picker.show {
+      display: flex;
+    }
+
+    .level-btn {
+      border: 1px solid var(--border);
+      color: var(--text);
+      background: var(--surface-2);
+      border-radius: 999px;
+      padding: 8px 14px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    .level-btn.active {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .controls-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+      border-top: 1px solid var(--border);
+      padding-top: 14px;
+    }
+
+    .switch {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--muted);
+      font-weight: 600;
+      user-select: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .switch input {
+      appearance: none;
+      width: 46px;
+      height: 24px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.08);
+      position: relative;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .switch input::before {
+      content: "";
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #fff;
+      top: 2px;
+      left: 3px;
+      transition: transform 0.2s ease;
+    }
+
+    .switch input:checked {
+      background: rgba(0, 180, 216, 0.65);
+      border-color: rgba(0, 180, 216, 0.8);
+    }
+
+    .switch input:checked::before {
+      transform: translateX(20px);
+    }
+
+    .duration-label {
+      color: var(--muted);
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+
+    .btn {
+      appearance: none;
+      border: 1px solid transparent;
+      border-radius: 11px;
+      padding: 10px 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 0.9rem;
+      font-family: inherit;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      color: #002530;
+      background: linear-gradient(135deg, #36dfff, var(--accent));
+      box-shadow: 0 6px 18px var(--accent-soft);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-2px);
+      filter: brightness(1.04);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text);
+      border-color: var(--border);
+    }
+
+    .btn-ghost:hover:not(:disabled) {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .exam-layout {
+      height: 100%;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      grid-template-rows: auto 1fr;
+      gap: 14px;
+    }
+
+    .exam-layout.sidebar-collapsed {
+      grid-template-columns: 1fr;
+    }
+
+    .topbar {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      min-height: 80px;
+    }
+
+    .topbar-left {
+      min-width: 170px;
+    }
+
+    .app-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .review-pill {
+      display: none;
+      font-size: 0.74rem;
+      font-weight: 700;
+      border-radius: 999px;
+      padding: 4px 9px;
+      background: var(--warning);
+      color: #2a2100;
+    }
+
+    .review-pill.show {
+      display: inline-flex;
+    }
+
+    .progress-area {
+      flex: 1;
+      min-width: 130px;
+    }
+
+    .progress-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--accent), #36dfff);
+      transition: width 0.35s ease;
+      box-shadow: 0 0 20px var(--accent-soft);
+    }
+
+    .topbar-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-left: auto;
+    }
+
+    .timer {
+      min-width: 95px;
+      text-align: center;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-family: "JetBrains Mono", monospace;
+      background: var(--surface-2);
+      font-weight: 700;
+      letter-spacing: 0.4px;
+    }
+
+    .timer.warning {
+      color: #ffe4e4;
+      background: rgba(239, 71, 111, 0.2);
+      border-color: rgba(239, 71, 111, 0.7);
+      animation: pulse 1s ease infinite;
+    }
+
+    @keyframes pulse {
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 rgba(239, 71, 111, 0.25);
+      }
+      50% {
+        box-shadow: 0 0 0 8px rgba(239, 71, 111, 0);
+      }
+    }
+
+    .sidebar-wrap {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .sidebar {
+      height: 100%;
+      padding: 12px;
+      overflow-y: auto;
+      transition: transform 0.26s ease;
+    }
+
+    .sidebar-group {
+      margin-bottom: 14px;
+    }
+
+    .sidebar-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    .q-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+      gap: 7px;
+    }
+
+    .q-btn {
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text);
+      min-height: 38px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      transition: all 0.2s ease;
+    }
+
+    .q-btn:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent);
+    }
+
+    .q-btn.current {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent) inset;
+    }
+
+    .q-btn.correct {
+      background: var(--correct-soft);
+      border-color: rgba(47, 191, 113, 0.6);
+    }
+
+    .q-btn.wrong {
+      background: var(--wrong-soft);
+      border-color: rgba(239, 71, 111, 0.6);
+    }
+
+    .status-badge {
+      font-size: 0.68rem;
+      opacity: 0.9;
+    }
+
+    .question-area {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      gap: 12px;
+      overflow: hidden;
+    }
+
+    .question-card {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      padding: 18px;
+      position: relative;
+      transition: transform 0.2s ease;
+    }
+
+    .question-card:hover {
+      transform: translateY(-1px);
+    }
+
+    .q-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .q-count {
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 0.88rem;
+    }
+
+    .difficulty-badge {
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      border: 1px solid transparent;
+    }
+
+    .difficulty-kolay {
+      background: rgba(47, 191, 113, 0.18);
+      color: #7effba;
+      border-color: rgba(47, 191, 113, 0.45);
+    }
+
+    .difficulty-orta {
+      background: rgba(248, 197, 55, 0.15);
+      color: #ffe38a;
+      border-color: rgba(248, 197, 55, 0.45);
+    }
+
+    .difficulty-zor {
+      background: rgba(239, 71, 111, 0.15);
+      color: #ff96ad;
+      border-color: rgba(239, 71, 111, 0.45);
+    }
+
+    body[data-theme="light"] .difficulty-kolay {
+      color: #0a6635;
+    }
+
+    body[data-theme="light"] .difficulty-orta {
+      color: #805700;
+    }
+
+    body[data-theme="light"] .difficulty-zor {
+      color: #8f1130;
+    }
+
+    .question-text {
+      line-height: 1.74;
+      color: var(--text);
+      margin-bottom: 14px;
+      font-size: 1.01rem;
+    }
+
+    .question-text p {
+      margin-bottom: 12px;
+    }
+
+    .question-text em {
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    .question-text code,
+    .opt-body code,
+    .explanation code {
+      font-family: "JetBrains Mono", monospace;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      padding: 1px 6px;
+      border-radius: 6px;
+      font-size: 0.89em;
+    }
+
+    .code-block {
+      margin: 12px 0;
+      border: 1px solid rgba(0, 180, 216, 0.4);
+      border-radius: 11px;
+      background: #0b1320;
+      overflow: auto;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+    }
+
+    .code-block pre {
+      margin: 0;
+      padding: 12px 14px;
+      color: #dbf6ff;
+      font-size: 0.87rem;
+      line-height: 1.58;
+      font-family: "JetBrains Mono", monospace;
+    }
+
+    .options {
+      display: grid;
+      gap: 9px;
+      margin-bottom: 12px;
+    }
+
+    .option {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.04);
+      padding: 11px 12px;
+      color: var(--text);
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      transition: all 0.18s ease;
+      font-family: inherit;
+      width: 100%;
+    }
+
+    .option:hover:not(:disabled) {
+      transform: translateY(-2px);
+      border-color: rgba(0, 180, 216, 0.6);
+      box-shadow: 0 6px 20px rgba(0, 180, 216, 0.16);
+    }
+
+    .option:disabled {
+      cursor: default;
+      opacity: 0.95;
+    }
+
+    .opt-key {
+      min-width: 26px;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      display: grid;
+      place-items: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-top: 1px;
+    }
+
+    .opt-body {
+      line-height: 1.55;
+      font-size: 0.95rem;
+      color: var(--text);
+    }
+
+    .option.correct-answer {
+      border-color: rgba(47, 191, 113, 0.72);
+      background: var(--correct-soft);
+      box-shadow: 0 0 18px rgba(47, 191, 113, 0.22);
+    }
+
+    .option.correct-answer .opt-key {
+      background: rgba(47, 191, 113, 0.25);
+      border-color: rgba(47, 191, 113, 0.62);
+    }
+
+    .option.wrong-answer {
+      border-color: rgba(239, 71, 111, 0.75);
+      background: var(--wrong-soft);
+      box-shadow: 0 0 18px rgba(239, 71, 111, 0.26);
+    }
+
+    .option.wrong-answer .opt-key {
+      background: rgba(239, 71, 111, 0.24);
+      border-color: rgba(239, 71, 111, 0.68);
+    }
+
+    .explanation-wrap {
+      border-top: 1px solid var(--border);
+      margin-top: 10px;
+      padding-top: 0;
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-height 0.33s ease, opacity 0.22s ease, padding-top 0.22s ease;
+    }
+
+    .explanation-wrap.show {
+      max-height: 400px;
+      opacity: 1;
+      padding-top: 12px;
+    }
+
+    .explanation {
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: 11px 12px;
+      line-height: 1.62;
+      color: var(--muted);
+      font-size: 0.92rem;
+      animation: fadeIn 0.25s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .nav-row {
+      display: flex;
+      gap: 9px;
+      justify-content: flex-end;
+      align-items: center;
+      padding: 10px;
+    }
+
+    .result-wrap {
+      height: 100%;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .result-top {
+      padding: 18px;
+    }
+
+    .score-line {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 9px;
+    }
+
+    .score-main {
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+      font-weight: 800;
+      letter-spacing: 0.02em;
+    }
+
+    .score-meta {
+      font-size: 1rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .stat-box {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--surface-2);
+      padding: 12px;
+    }
+
+    .stat-box small {
+      display: block;
+      color: var(--muted);
+      font-size: 0.78rem;
+      margin-bottom: 4px;
+    }
+
+    .stat-box strong {
+      font-size: 1rem;
+    }
+
+    .result-table-wrap {
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .table-shell {
+      flex: 1;
+      overflow: auto;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 640px;
+    }
+
+    thead th {
+      position: sticky;
+      top: 0;
+      background: var(--surface);
+      color: var(--muted);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      text-align: left;
+      padding: 10px;
+      border-bottom: 1px solid var(--border);
+      z-index: 2;
+    }
+
+    tbody td {
+      padding: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 0.9rem;
+    }
+
+    tbody tr:hover {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .ok {
+      color: #81ffc1;
+      font-weight: 700;
+    }
+
+    .no {
+      color: #ff93ab;
+      font-weight: 700;
+    }
+
+    body[data-theme="light"] .ok {
+      color: #116337;
+    }
+
+    body[data-theme="light"] .no {
+      color: #9a1234;
+    }
+
+    .result-actions {
+      display: flex;
+      gap: 9px;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+
+    .toast-wrap {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      z-index: 140;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: min(330px, 92vw);
+    }
+
+    .toast {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      border-left-width: 4px;
+      border-left-color: var(--accent);
+      border-radius: 10px;
+      padding: 10px 12px;
+      box-shadow: var(--shadow);
+      animation: toastIn 0.26s ease;
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+
+    .toast.warn {
+      border-left-color: var(--warning);
+    }
+
+    .toast.error {
+      border-left-color: var(--wrong);
+    }
+
+    @keyframes toastIn {
+      from {
+        opacity: 0;
+        transform: translateY(7px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 40;
+    }
+
+    .overlay.show {
+      display: block;
+    }
+
+    @media (max-width: 980px) {
+      .exam-layout {
+        grid-template-columns: 240px 1fr;
+      }
+
+      .stat-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 768px) {
+      .app {
+        padding: 10px;
+      }
+
+      .mode-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .exam-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar-wrap {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: min(290px, 84vw);
+        height: 100vh;
+        z-index: 60;
+        transform: translateX(-102%);
+        transition: transform 0.25s ease;
+      }
+
+      .sidebar-wrap.open {
+        transform: translateX(0);
+      }
+
+      .question-area {
+        min-height: 0;
+      }
+
+      .topbar {
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .topbar-actions {
+        width: 100%;
+        margin-left: 0;
+        justify-content: flex-end;
+      }
+
+      .stat-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .result-actions {
+        width: 100%;
+      }
+
+      .result-actions .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <button id="themeToggle" class="theme-toggle" type="button">Tema: Dark</button>
+
+  <div class="app" id="app">
+    <section id="loadingScreen" class="screen active">
+      <div class="center-wrap">
+        <div class="loading-card glass">
+          <div class="spinner" aria-hidden="true"></div>
+          <div>
+            <div class="loading-title">Soru bankası yükleniyor</div>
+            <p class="muted">`CyberSecurity_Roadmap_Test.md` okunuyor ve 120 soru ayrıştırılıyor...</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="errorScreen" class="screen">
+      <div class="center-wrap">
+        <div class="error-card glass">
+          <h2>Dosya yüklenemedi</h2>
+          <p>Markdown dosyası alınamadı. Bu uygulamayı doğrudan dosya olarak açmak yerine yerel bir HTTP sunucusunda çalıştırın.</p>
+          <ul>
+            <li>Bu klasörde terminal açın.</li>
+            <li>`python3 -m http.server 8000` komutunu çalıştırın.</li>
+            <li>Tarayıcıdan `http://localhost:8000/index.html` açın.</li>
+          </ul>
+          <button id="retryBtn" class="btn btn-primary" type="button">Tekrar Dene</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="startScreen" class="screen">
+      <div class="center-wrap">
+        <div class="start-card glass">
+          <div class="start-head">
+            <div class="start-title">
+              <h1>CyberSecurity E-Exam</h1>
+              <p class="muted">Interaktif sınav simülatörü - tek sayfa, canlı değerlendirme, detaylı sonuç analizi.</p>
+            </div>
+            <span id="questionCountChip" class="chip">Soru: 0</span>
+          </div>
+
+          <div class="section-title">Sınav Modu</div>
+          <div class="mode-grid" id="modeGrid">
+            <button type="button" class="mode-card" data-mode="full">
+              <strong>Tam Sınav</strong>
+              <p>Tüm 120 soru, orijinal sırayla.</p>
+            </button>
+            <button type="button" class="mode-card" data-mode="level">
+              <strong>Seviyeye Göre</strong>
+              <p>Kolay / Orta / Zor alt kümesi seçin.</p>
+            </button>
+            <button type="button" class="mode-card" data-mode="random30">
+              <strong>Rastgele 30</strong>
+              <p>Havuzdan rastgele 30 soru.</p>
+            </button>
+            <button type="button" class="mode-card" data-mode="random60">
+              <strong>Rastgele 60</strong>
+              <p>Havuzdan rastgele 60 soru.</p>
+            </button>
+          </div>
+
+          <div id="levelPicker" class="level-picker" aria-label="Seviye seçimi">
+            <button type="button" class="level-btn" data-level="Kolay">Kolay 🟢</button>
+            <button type="button" class="level-btn" data-level="Orta">Orta 🟡</button>
+            <button type="button" class="level-btn" data-level="Zor">Zor 🔴</button>
+          </div>
+
+          <div class="controls-row">
+            <label class="switch">
+              <input id="timerToggle" type="checkbox" checked />
+              <span>Sayaç açık</span>
+            </label>
+            <span id="durationLabel" class="duration-label">Tahmini süre: 45:00</span>
+            <button id="startExamBtn" class="btn btn-primary" type="button" disabled>Sınavı Başlat</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="examScreen" class="screen">
+      <div id="examLayout" class="exam-layout">
+        <header class="topbar glass">
+          <div class="topbar-left">
+            <div class="app-title">CyberSecurity Test</div>
+            <span id="reviewPill" class="review-pill">İNCELEME MODU</span>
+          </div>
+
+          <div class="progress-area">
+            <div class="progress-meta">
+              <span id="progressText">0 / 0 cevaplandı</span>
+              <span id="modeText">Mod</span>
+            </div>
+            <div class="progress-track">
+              <div id="progressFill" class="progress-fill"></div>
+            </div>
+          </div>
+
+          <div class="topbar-actions">
+            <button id="sidebarToggleBtn" class="btn btn-ghost" type="button">Sidebar (S)</button>
+            <div id="timerBox" class="timer">--:--</div>
+          </div>
+        </header>
+
+        <aside id="sidebarWrap" class="sidebar-wrap glass">
+          <div id="sidebar" class="sidebar"></div>
+        </aside>
+
+        <main class="question-area">
+          <article id="questionCard" class="question-card glass"></article>
+          <div class="nav-row glass">
+            <button id="prevBtn" class="btn btn-ghost" type="button">← Önceki</button>
+            <button id="nextBtn" class="btn btn-ghost" type="button">Sonraki →</button>
+            <button id="finishBtn" class="btn btn-primary" type="button">Sınavı Bitir</button>
+          </div>
+        </main>
+      </div>
+    </section>
+
+    <section id="resultsScreen" class="screen">
+      <div class="result-wrap">
+        <div class="result-top glass">
+          <div class="score-line">
+            <span id="scoreMain" class="score-main">0 / 0</span>
+            <span id="scoreMeta" class="score-meta">0% · Not: F</span>
+          </div>
+          <p class="muted">Aşağıdaki tabloda tüm soruların yanıt karşılaştırmasını görebilirsiniz.</p>
+
+          <div class="stat-grid">
+            <div class="stat-box">
+              <small>Kolay</small>
+              <strong id="easyStat">0 / 0</strong>
+            </div>
+            <div class="stat-box">
+              <small>Orta</small>
+              <strong id="mediumStat">0 / 0</strong>
+            </div>
+            <div class="stat-box">
+              <small>Zor</small>
+              <strong id="hardStat">0 / 0</strong>
+            </div>
+            <div class="stat-box">
+              <small>Yanıtlanan</small>
+              <strong id="answeredStat">0 / 0</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="result-table-wrap glass">
+          <div class="section-title">Soru Özeti</div>
+          <div class="table-shell">
+            <table>
+              <thead>
+                <tr>
+                  <th>Soru</th>
+                  <th>Senin Cevabın</th>
+                  <th>Doğru Cevap</th>
+                  <th>Durum</th>
+                  <th>Zorluk</th>
+                </tr>
+              </thead>
+              <tbody id="summaryBody"></tbody>
+            </table>
+          </div>
+
+          <div class="result-actions">
+            <button id="reviewBtn" class="btn btn-ghost" type="button">Cevapları İncele</button>
+            <button id="newExamBtn" class="btn btn-primary" type="button">Yeni Sınav</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div id="mobileOverlay" class="overlay"></div>
+  <div id="toastWrap" class="toast-wrap"></div>
+
+  <script>
+    "use strict";
+
+    // (1) CONFIG & CONSTANTS
+    const CONFIG = {
+      mdPath: "CyberSecurity_Roadmap_Test.md",
+      expectedQuestionCount: 120,
+      modes: {
+        full: { label: "Tam Sınav", fixedMinutes: 45 },
+        level: { label: "Seviyeye Göre", fixedMinutes: null },
+        random30: { label: "Rastgele 30", fixedMinutes: 15 },
+        random60: { label: "Rastgele 60", fixedMinutes: 30 }
+      },
+      difficultyMeta: {
+        Kolay: { dot: "🟢", className: "difficulty-kolay" },
+        Orta: { dot: "🟡", className: "difficulty-orta" },
+        Zor: { dot: "🔴", className: "difficulty-zor" }
+      }
+    };
+
+    const DOM = {
+      loadingScreen: document.getElementById("loadingScreen"),
+      errorScreen: document.getElementById("errorScreen"),
+      startScreen: document.getElementById("startScreen"),
+      examScreen: document.getElementById("examScreen"),
+      resultsScreen: document.getElementById("resultsScreen"),
+      examLayout: document.getElementById("examLayout"),
+      retryBtn: document.getElementById("retryBtn"),
+      questionCountChip: document.getElementById("questionCountChip"),
+      modeGrid: document.getElementById("modeGrid"),
+      levelPicker: document.getElementById("levelPicker"),
+      timerToggle: document.getElementById("timerToggle"),
+      durationLabel: document.getElementById("durationLabel"),
+      startExamBtn: document.getElementById("startExamBtn"),
+      sidebarWrap: document.getElementById("sidebarWrap"),
+      sidebar: document.getElementById("sidebar"),
+      sidebarToggleBtn: document.getElementById("sidebarToggleBtn"),
+      questionCard: document.getElementById("questionCard"),
+      prevBtn: document.getElementById("prevBtn"),
+      nextBtn: document.getElementById("nextBtn"),
+      finishBtn: document.getElementById("finishBtn"),
+      progressText: document.getElementById("progressText"),
+      modeText: document.getElementById("modeText"),
+      progressFill: document.getElementById("progressFill"),
+      timerBox: document.getElementById("timerBox"),
+      reviewPill: document.getElementById("reviewPill"),
+      scoreMain: document.getElementById("scoreMain"),
+      scoreMeta: document.getElementById("scoreMeta"),
+      easyStat: document.getElementById("easyStat"),
+      mediumStat: document.getElementById("mediumStat"),
+      hardStat: document.getElementById("hardStat"),
+      answeredStat: document.getElementById("answeredStat"),
+      summaryBody: document.getElementById("summaryBody"),
+      reviewBtn: document.getElementById("reviewBtn"),
+      newExamBtn: document.getElementById("newExamBtn"),
+      toastWrap: document.getElementById("toastWrap"),
+      mobileOverlay: document.getElementById("mobileOverlay"),
+      themeToggle: document.getElementById("themeToggle")
+    };
+
+    // (2) STATE
+    const state = {
+      allQuestions: [],
+      examQuestions: [],
+      answers: {},
+      mode: null,
+      selectedDifficulty: null,
+      timerEnabled: true,
+      timerTotalSec: 0,
+      timerRemainingSec: 0,
+      timerIntervalId: null,
+      currentIndex: 0,
+      reviewMode: false,
+      sidebarOpen: window.innerWidth > 768,
+      score: null
+    };
+
+    // (3) MARKDOWN PARSER
+    function parseMarkdownQuestions(markdownText) {
+      const normalized = markdownText.replace(/\r/g, "");
+      const sections = [
+        { difficulty: "Kolay", regex: /## BÖLÜM I[\s\S]*?(?=## BÖLÜM II|$)/i },
+        { difficulty: "Orta", regex: /## BÖLÜM II[\s\S]*?(?=## BÖLÜM III|$)/i },
+        { difficulty: "Zor", regex: /## BÖLÜM III[\s\S]*?(?=## CEVAP ANAHTARI|$)/i }
+      ];
+
+      const questionRegex = /\*\*(\d+)\.\*\*\s*([\s\S]*?)\nA\)\s*(.*?)\nB\)\s*(.*?)\nC\)\s*(.*?)\nD\)\s*(.*?)\n+\*\*Doğru Cevap:\s*([ABCD])\*\*\s*\n\*\*Açıklama:\*\*\s*([\s\S]*?)(?=\n---\n|\n\*\*\d+\.\*\*|$)/g;
+
+      const out = [];
+
+      sections.forEach((section) => {
+        const secMatch = normalized.match(section.regex);
+        if (!secMatch) {
+          return;
+        }
+
+        const block = secMatch[0];
+        let m;
+        while ((m = questionRegex.exec(block)) !== null) {
+          const id = Number(m[1]);
+          out.push({
+            id,
+            question: cleanMdChunk(m[2]),
+            options: {
+              A: cleanMdChunk(m[3]),
+              B: cleanMdChunk(m[4]),
+              C: cleanMdChunk(m[5]),
+              D: cleanMdChunk(m[6])
+            },
+            correct: m[7],
+            explanation: cleanMdChunk(m[8]),
+            difficulty: section.difficulty
+          });
+        }
+      });
+
+      out.sort((a, b) => a.id - b.id);
+
+      if (!out.length) {
+        throw new Error("Sorular ayrıştırılamadı.");
+      }
+
+      return out;
+    }
+
+    function cleanMdChunk(text) {
+      return text
+        .split("\n")
+        .map((line) => line.replace(/\s+$/g, ""))
+        .join("\n")
+        .trim();
+    }
+
+    // (4) RENDER
+    function showScreen(screenKey) {
+      [DOM.loadingScreen, DOM.errorScreen, DOM.startScreen, DOM.examScreen, DOM.resultsScreen].forEach((s) => s.classList.remove("active"));
+      DOM[screenKey].classList.add("active");
+    }
+
+    function renderStartScreen() {
+      DOM.questionCountChip.textContent = `Soru: ${state.allQuestions.length}`;
+      DOM.levelPicker.classList.toggle("show", state.mode === "level");
+
+      const modeCards = DOM.modeGrid.querySelectorAll(".mode-card");
+      modeCards.forEach((card) => {
+        card.classList.toggle("selected", card.dataset.mode === state.mode);
+      });
+
+      const levelBtns = DOM.levelPicker.querySelectorAll(".level-btn");
+      levelBtns.forEach((btn) => {
+        btn.classList.toggle("active", btn.dataset.level === state.selectedDifficulty);
+      });
+
+      DOM.startExamBtn.disabled = !isStartReady();
+      DOM.durationLabel.textContent = DOM.timerToggle.checked
+        ? `Tahmini süre: ${formatTime(estimateExamSeconds())}`
+        : "Tahmini süre: Kapalı";
+    }
+
+    function renderSidebar() {
+      const groups = { Kolay: [], Orta: [], Zor: [] };
+
+      state.examQuestions.forEach((q, idx) => {
+        const answer = state.answers[q.id];
+        const statusClass = !answer ? "" : answer.isCorrect ? "correct" : "wrong";
+        const statusIcon = !answer ? "" : answer.isCorrect ? "✓" : "✗";
+
+        groups[q.difficulty].push(`
+          <button class="q-btn ${statusClass} ${idx === state.currentIndex ? "current" : ""}" data-index="${idx}" type="button">
+            <span>${q.id}</span>
+            <span class="status-badge">${statusIcon}</span>
+          </button>
+        `);
+      });
+
+      DOM.sidebar.innerHTML = ["Kolay", "Orta", "Zor"]
+        .map((difficulty) => {
+          if (!groups[difficulty].length) {
+            return "";
+          }
+          const icon = CONFIG.difficultyMeta[difficulty].dot;
+          return `
+            <section class="sidebar-group">
+              <div class="sidebar-label">${icon} ${difficulty}</div>
+              <div class="q-grid">${groups[difficulty].join("")}</div>
+            </section>
+          `;
+        })
+        .join("");
+    }
+
+    function renderQuestion() {
+      const q = state.examQuestions[state.currentIndex];
+      if (!q) {
+        DOM.questionCard.innerHTML = "";
+        return;
+      }
+
+      const answer = state.answers[q.id];
+      const meta = CONFIG.difficultyMeta[q.difficulty];
+      const isAnswered = Boolean(answer);
+      const forceReveal = state.reviewMode;
+
+      const optionsHtml = ["A", "B", "C", "D"].map((letter) => {
+        const selected = answer && answer.selected === letter;
+        const correct = q.correct === letter;
+
+        let cls = "";
+        if (forceReveal || isAnswered) {
+          if (selected && correct) cls = "correct-answer";
+          if (selected && !correct) cls = "wrong-answer";
+          if ((!selected || forceReveal) && correct) cls = "correct-answer";
+        }
+
+        const disabled = isAnswered || state.reviewMode ? "disabled" : "";
+        return `
+          <button type="button" class="option ${cls}" data-option="${letter}" ${disabled}>
+            <span class="opt-key">${letter}</span>
+            <span class="opt-body">${renderMarkdownInline(q.options[letter])}</span>
+          </button>
+        `;
+      }).join("");
+
+      const showExplanation = isAnswered || forceReveal;
+      DOM.questionCard.innerHTML = `
+        <div class="q-head">
+          <div class="q-count">Soru ${state.currentIndex + 1} / ${state.examQuestions.length} · #${q.id}</div>
+          <span class="difficulty-badge ${meta.className}">${q.difficulty} ${meta.dot}</span>
+        </div>
+
+        <div class="question-text">${renderMarkdownRich(q.question)}</div>
+
+        <div class="options">
+          ${optionsHtml}
+        </div>
+
+        <div class="explanation-wrap ${showExplanation ? "show" : ""}">
+          <div class="explanation"><strong>Açıklama:</strong> ${renderMarkdownRich(q.explanation)}</div>
+        </div>
+      `;
+
+      DOM.prevBtn.disabled = state.currentIndex === 0;
+      DOM.nextBtn.disabled = state.currentIndex === state.examQuestions.length - 1;
+      DOM.nextBtn.textContent = state.currentIndex === state.examQuestions.length - 1 ? "Son Soru" : "Sonraki →";
+    }
+
+    function renderExamHeader() {
+      const answered = getAnsweredCount();
+      const total = state.examQuestions.length;
+      const percent = total ? (answered / total) * 100 : 0;
+      DOM.progressText.textContent = `${answered} / ${total} cevaplandı`;
+      DOM.modeText.textContent = `${getModeDisplayName()}`;
+      DOM.progressFill.style.width = `${percent}%`;
+      DOM.reviewPill.classList.toggle("show", state.reviewMode);
+      DOM.timerBox.style.display = state.timerEnabled ? "block" : "none";
+    }
+
+    function renderTimer() {
+      if (!state.timerEnabled) {
+        DOM.timerBox.textContent = "Sınırsız";
+        DOM.timerBox.classList.remove("warning");
+        return;
+      }
+
+      DOM.timerBox.textContent = formatTime(state.timerRemainingSec);
+      const warning = state.timerRemainingSec <= 300;
+      DOM.timerBox.classList.toggle("warning", warning);
+    }
+
+    function renderResults() {
+      const total = state.examQuestions.length;
+      const correct = state.score.correct;
+      const percent = total ? Math.round((correct / total) * 100) : 0;
+
+      animateScore(correct, total, percent, state.score.grade);
+
+      DOM.easyStat.textContent = `${state.score.byDifficulty.Kolay.correct} / ${state.score.byDifficulty.Kolay.total}`;
+      DOM.mediumStat.textContent = `${state.score.byDifficulty.Orta.correct} / ${state.score.byDifficulty.Orta.total}`;
+      DOM.hardStat.textContent = `${state.score.byDifficulty.Zor.correct} / ${state.score.byDifficulty.Zor.total}`;
+      DOM.answeredStat.textContent = `${state.score.answered} / ${total}`;
+
+      DOM.summaryBody.innerHTML = state.examQuestions
+        .map((q) => {
+          const answer = state.answers[q.id];
+          const userVal = answer ? answer.selected : "-";
+          const ok = answer ? answer.isCorrect : false;
+          const statusCell = answer ? (ok ? '<span class="ok">✓</span>' : '<span class="no">✗</span>') : '<span class="no">-</span>';
+          return `
+            <tr>
+              <td>#${q.id}</td>
+              <td>${userVal}</td>
+              <td>${q.correct}</td>
+              <td>${statusCell}</td>
+              <td>${difficultyBadgeSmall(q.difficulty)}</td>
+            </tr>
+          `;
+        })
+        .join("");
+    }
+
+    function difficultyBadgeSmall(diff) {
+      const meta = CONFIG.difficultyMeta[diff];
+      return `<span class="difficulty-badge ${meta.className}">${diff} ${meta.dot}</span>`;
+    }
+
+    function syncSidebarLayout() {
+      const mobile = window.innerWidth <= 768;
+      if (mobile) {
+        DOM.sidebarWrap.style.display = "block";
+        DOM.sidebarWrap.classList.toggle("open", state.sidebarOpen);
+        DOM.mobileOverlay.classList.toggle("show", state.sidebarOpen && DOM.examScreen.classList.contains("active"));
+        DOM.examLayout.classList.remove("sidebar-collapsed");
+      } else {
+        DOM.sidebarWrap.classList.remove("open");
+        DOM.mobileOverlay.classList.remove("show");
+        DOM.sidebarWrap.style.display = state.sidebarOpen ? "block" : "none";
+        DOM.examLayout.classList.toggle("sidebar-collapsed", !state.sidebarOpen);
+      }
+    }
+
+    function renderAllExam() {
+      renderExamHeader();
+      renderTimer();
+      renderSidebar();
+      renderQuestion();
+      syncSidebarLayout();
+    }
+
+    function showToast(message, type = "info", timeout = 2600) {
+      const toast = document.createElement("div");
+      toast.className = `toast ${type === "warn" ? "warn" : type === "error" ? "error" : ""}`;
+      toast.textContent = message;
+      DOM.toastWrap.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.opacity = "0";
+        toast.style.transform = "translateY(8px)";
+        setTimeout(() => toast.remove(), 250);
+      }, timeout);
+    }
+
+    function renderMarkdownRich(md) {
+      const escaped = escapeHtml(md);
+      const chunks = [];
+      let last = 0;
+      const fenceRegex = /```([\s\S]*?)```/g;
+      let match;
+
+      while ((match = fenceRegex.exec(escaped)) !== null) {
+        const before = escaped.slice(last, match.index);
+        if (before.trim()) {
+          chunks.push(renderParagraphs(before));
+        }
+        chunks.push(`<div class="code-block"><pre>${match[1].trim()}</pre></div>`);
+        last = match.index + match[0].length;
+      }
+
+      const rest = escaped.slice(last);
+      if (rest.trim()) {
+        chunks.push(renderParagraphs(rest));
+      }
+
+      return chunks.join("");
+    }
+
+    function renderParagraphs(text) {
+      return text
+        .trim()
+        .split(/\n{2,}/)
+        .filter(Boolean)
+        .map((p) => {
+          const lines = p.split("\n").map((line) => {
+            const trimmed = line.trim();
+            if (/^\*(.+)\*$/.test(trimmed)) {
+              return `<em>${renderMarkdownInline(trimmed.slice(1, -1))}</em>`;
+            }
+            return renderMarkdownInline(trimmed);
+          });
+          return `<p>${lines.join("<br>")}</p>`;
+        })
+        .join("");
+    }
+
+    function renderMarkdownInline(text) {
+      return escapeHtml(text).replace(/`([^`]+)`/g, "<code>$1</code>");
+    }
+
+    function escapeHtml(value) {
+      return value
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    // (5) EVENT HANDLERS
+    function selectMode(mode) {
+      state.mode = mode;
+      if (mode !== "level") {
+        state.selectedDifficulty = null;
+      }
+      renderStartScreen();
+    }
+
+    function selectDifficulty(level) {
+      state.selectedDifficulty = level;
+      renderStartScreen();
+    }
+
+    function isStartReady() {
+      if (!state.mode) return false;
+      if (state.mode === "level" && !state.selectedDifficulty) return false;
+      return true;
+    }
+
+    function estimateExamSeconds() {
+      if (!state.mode) {
+        return CONFIG.modes.full.fixedMinutes * 60;
+      }
+      const byMode = CONFIG.modes[state.mode];
+      if (byMode.fixedMinutes) {
+        return byMode.fixedMinutes * 60;
+      }
+
+      const levelCount = state.allQuestions.filter((q) => q.difficulty === state.selectedDifficulty).length || 35;
+      const minutes = Math.max(10, Math.round((45 * levelCount) / CONFIG.expectedQuestionCount));
+      return minutes * 60;
+    }
+
+    function getModeDisplayName() {
+      if (state.mode === "level") {
+        return `${CONFIG.modes.level.label} · ${state.selectedDifficulty || "-"}`;
+      }
+      return CONFIG.modes[state.mode]?.label || "Sınav";
+    }
+
+    function createExamList() {
+      if (state.mode === "full") {
+        return [...state.allQuestions].sort((a, b) => a.id - b.id);
+      }
+      if (state.mode === "level") {
+        return state.allQuestions.filter((q) => q.difficulty === state.selectedDifficulty).sort((a, b) => a.id - b.id);
+      }
+      if (state.mode === "random30") {
+        return shuffle([...state.allQuestions]).slice(0, 30);
+      }
+      if (state.mode === "random60") {
+        return shuffle([...state.allQuestions]).slice(0, 60);
+      }
+      return [];
+    }
+
+    function startExam() {
+      state.examQuestions = createExamList();
+      state.answers = {};
+      state.currentIndex = 0;
+      state.reviewMode = false;
+      state.score = null;
+      state.timerEnabled = DOM.timerToggle.checked;
+      state.timerTotalSec = estimateExamSeconds();
+      state.timerRemainingSec = state.timerTotalSec;
+
+      stopTimer();
+      if (state.timerEnabled) {
+        state.timerIntervalId = setInterval(() => {
+          state.timerRemainingSec -= 1;
+          renderTimer();
+          if (state.timerRemainingSec <= 0) {
+            stopTimer();
+            state.timerRemainingSec = 0;
+            renderTimer();
+            showToast("Süre doldu. Sınav otomatik gönderiliyor.", "warn", 3000);
+            submitExam(true);
+          }
+        }, 1000);
+      }
+
+      showScreen("examScreen");
+      syncSidebarLayout();
+      renderAllExam();
+    }
+
+    function stopTimer() {
+      if (state.timerIntervalId) {
+        clearInterval(state.timerIntervalId);
+        state.timerIntervalId = null;
+      }
+    }
+
+    function answerCurrent(letter) {
+      if (state.reviewMode) return;
+
+      const q = state.examQuestions[state.currentIndex];
+      if (!q || state.answers[q.id]) return;
+
+      const isCorrect = q.correct === letter;
+      state.answers[q.id] = {
+        selected: letter,
+        isCorrect,
+        correct: q.correct,
+        difficulty: q.difficulty
+      };
+
+      renderAllExam();
+
+      if (isCorrect) {
+        showToast(`Soru #${q.id}: Doğru`, "info", 1300);
+      } else {
+        showToast(`Soru #${q.id}: Yanlış (Doğru: ${q.correct})`, "warn", 2200);
+      }
+    }
+
+    function goTo(index) {
+      if (index < 0 || index >= state.examQuestions.length) return;
+      state.currentIndex = index;
+      renderAllExam();
+    }
+
+    function goNext() {
+      if (state.currentIndex < state.examQuestions.length - 1) {
+        state.currentIndex += 1;
+        renderAllExam();
+      }
+    }
+
+    function goPrev() {
+      if (state.currentIndex > 0) {
+        state.currentIndex -= 1;
+        renderAllExam();
+      }
+    }
+
+    function getAnsweredCount() {
+      return Object.keys(state.answers).length;
+    }
+
+    function computeScore() {
+      const total = state.examQuestions.length;
+      const answered = getAnsweredCount();
+      let correct = 0;
+      const byDifficulty = {
+        Kolay: { correct: 0, total: 0 },
+        Orta: { correct: 0, total: 0 },
+        Zor: { correct: 0, total: 0 }
+      };
+
+      state.examQuestions.forEach((q) => {
+        byDifficulty[q.difficulty].total += 1;
+        const ans = state.answers[q.id];
+        if (ans && ans.isCorrect) {
+          correct += 1;
+          byDifficulty[q.difficulty].correct += 1;
+        }
+      });
+
+      const pct = total ? Math.round((correct / total) * 100) : 0;
+      const grade = scoreToGrade(pct);
+
+      return { total, answered, correct, pct, grade, byDifficulty };
+    }
+
+    function scoreToGrade(pct) {
+      if (pct >= 90) return "A";
+      if (pct >= 80) return "B";
+      if (pct >= 70) return "C";
+      if (pct >= 60) return "D";
+      return "F";
+    }
+
+    function submitExam(auto = false) {
+      if (!state.examQuestions.length) return;
+      if (!auto && !state.reviewMode) {
+        const unanswered = state.examQuestions.length - getAnsweredCount();
+        if (unanswered > 0) {
+          const ok = window.confirm(`Hâlâ ${unanswered} soru boş. Yine de sınavı bitirmek istiyor musun?`);
+          if (!ok) return;
+        }
+      }
+
+      stopTimer();
+      state.score = computeScore();
+      showScreen("resultsScreen");
+      renderResults();
+    }
+
+    function openReviewMode() {
+      state.reviewMode = true;
+      state.currentIndex = 0;
+      showScreen("examScreen");
+      renderAllExam();
+    }
+
+    function resetToStart() {
+      stopTimer();
+      state.examQuestions = [];
+      state.answers = {};
+      state.currentIndex = 0;
+      state.reviewMode = false;
+      state.score = null;
+      showScreen("startScreen");
+      renderStartScreen();
+    }
+
+    function toggleSidebar() {
+      state.sidebarOpen = !state.sidebarOpen;
+      syncSidebarLayout();
+    }
+
+    function formatTime(sec) {
+      const clamped = Math.max(0, Math.floor(sec));
+      const mm = String(Math.floor(clamped / 60)).padStart(2, "0");
+      const ss = String(clamped % 60).padStart(2, "0");
+      return `${mm}:${ss}`;
+    }
+
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function animateScore(correct, total, percent, grade) {
+      const duration = 900;
+      const start = performance.now();
+
+      const tick = (now) => {
+        const t = Math.min(1, (now - start) / duration);
+        const eased = 1 - Math.pow(1 - t, 3);
+        const c = Math.round(correct * eased);
+        const p = Math.round(percent * eased);
+        DOM.scoreMain.textContent = `${c} / ${total}`;
+        DOM.scoreMeta.textContent = `${p}% · Not: ${grade}`;
+
+        if (t < 1) {
+          requestAnimationFrame(tick);
+        }
+      };
+
+      requestAnimationFrame(tick);
+    }
+
+    function applyTheme(theme) {
+      document.body.setAttribute("data-theme", theme);
+      DOM.themeToggle.textContent = `Tema: ${theme === "dark" ? "Dark" : "Light"}`;
+      localStorage.setItem("exam-theme", theme);
+    }
+
+    async function loadMarkdownQuestions() {
+      showScreen("loadingScreen");
+
+      try {
+        const res = await fetch(CONFIG.mdPath);
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}`);
+        }
+        const text = await res.text();
+        const parsed = parseMarkdownQuestions(text);
+
+        state.allQuestions = parsed;
+
+        if (state.allQuestions.length !== CONFIG.expectedQuestionCount) {
+          showToast(`Uyarı: ${state.allQuestions.length} soru bulundu (beklenen ${CONFIG.expectedQuestionCount}).`, "warn", 4600);
+        }
+
+        showScreen("startScreen");
+        renderStartScreen();
+      } catch (err) {
+        console.error(err);
+        showScreen("errorScreen");
+      }
+    }
+
+    function bindEvents() {
+      DOM.retryBtn.addEventListener("click", loadMarkdownQuestions);
+
+      DOM.modeGrid.addEventListener("click", (e) => {
+        const card = e.target.closest(".mode-card");
+        if (!card) return;
+        selectMode(card.dataset.mode);
+      });
+
+      DOM.levelPicker.addEventListener("click", (e) => {
+        const btn = e.target.closest(".level-btn");
+        if (!btn) return;
+        selectDifficulty(btn.dataset.level);
+      });
+
+      DOM.timerToggle.addEventListener("change", () => {
+        renderStartScreen();
+      });
+
+      DOM.startExamBtn.addEventListener("click", () => {
+        if (!isStartReady()) return;
+        startExam();
+      });
+
+      DOM.sidebar.addEventListener("click", (e) => {
+        const btn = e.target.closest(".q-btn");
+        if (!btn) return;
+        goTo(Number(btn.dataset.index));
+        if (window.innerWidth <= 768) {
+          state.sidebarOpen = false;
+          syncSidebarLayout();
+        }
+      });
+
+      DOM.questionCard.addEventListener("click", (e) => {
+        const opt = e.target.closest(".option");
+        if (!opt || opt.disabled) return;
+        answerCurrent(opt.dataset.option);
+      });
+
+      DOM.prevBtn.addEventListener("click", goPrev);
+      DOM.nextBtn.addEventListener("click", goNext);
+      DOM.finishBtn.addEventListener("click", () => submitExam(false));
+
+      DOM.reviewBtn.addEventListener("click", openReviewMode);
+      DOM.newExamBtn.addEventListener("click", resetToStart);
+
+      DOM.sidebarToggleBtn.addEventListener("click", toggleSidebar);
+      DOM.mobileOverlay.addEventListener("click", () => {
+        state.sidebarOpen = false;
+        syncSidebarLayout();
+      });
+
+      window.addEventListener("resize", syncSidebarLayout);
+
+      window.addEventListener("keydown", (e) => {
+        if (!DOM.examScreen.classList.contains("active")) return;
+        if (["INPUT", "TEXTAREA"].includes(document.activeElement?.tagName)) return;
+
+        const key = e.key.toLowerCase();
+        if (key === "arrowright") {
+          e.preventDefault();
+          goNext();
+        } else if (key === "arrowleft") {
+          e.preventDefault();
+          goPrev();
+        } else if (key === "1") {
+          answerCurrent("A");
+        } else if (key === "2") {
+          answerCurrent("B");
+        } else if (key === "3") {
+          answerCurrent("C");
+        } else if (key === "4") {
+          answerCurrent("D");
+        } else if (key === "s") {
+          e.preventDefault();
+          toggleSidebar();
+        }
+      });
+
+      DOM.themeToggle.addEventListener("click", () => {
+        const current = document.body.getAttribute("data-theme") || "dark";
+        applyTheme(current === "dark" ? "light" : "dark");
+      });
+    }
+
+    // (6) INIT
+    function init() {
+      const savedTheme = localStorage.getItem("exam-theme") || "dark";
+      applyTheme(savedTheme);
+      bindEvents();
+      loadMarkdownQuestions();
+    }
+
+    init();
+  </script>
+</body>
+</html>
